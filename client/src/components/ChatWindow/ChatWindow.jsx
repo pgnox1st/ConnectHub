@@ -1,5 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FaPhoneAlt, FaVideo, FaInfoCircle, FaPlus, FaSmile, FaMicrophone, FaPlay, FaCheckDouble, FaPaperPlane } from 'react-icons/fa';
+import { io } from 'socket.io-client';
+
+// Connect to backend Socket.io server port 5000
+const ENDPOINT = 'http://localhost:5000';
+let socket;
 
 function ChatWindow() {
   const [messages, setMessages] = useState([
@@ -11,31 +16,89 @@ function ChatWindow() {
   ]);
 
   const [inputText, setInputText] = useState('');
-  const [isTyping, setIsTyping] = useState(true);
+  const [isTyping, setIsTyping] = useState(false);
+  const [typingIndicator, setTypingIndicator] = useState(false);
   const messagesEndRef = useRef(null);
+  
+  // Fake static room ID for testing connection
+  const activeChatId = "60c72b2f9b1d8b2bad6e4a1a"; 
 
-  // Auto scroll to bottom when new message arrives
+  // Initialize Socket Connection
+  useEffect(() => {
+    socket = io(ENDPOINT);
+    socket.emit("join_chat", activeChatId);
+
+    // Listen for incoming real-time messages
+    socket.on("message_received", (newMessageReceived) => {
+      setMessages((prevMessages) => [...prevMessages, {
+        id: prevMessages.length + 1,
+        sender: 'emily',
+        text: newMessageReceived.text,
+        time: newMessageReceived.time
+      }]);
+    });
+
+    // Listen for typing statuses
+    socket.on("typing", () => setTypingIndicator(true));
+    socket.on("stop_typing", () => setTypingIndicator(false));
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  // Auto-scroll logic
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Typing logic handler
+  const handleInputChange = (e) => {
+    setInputText(e.target.value);
+
+    if (!socket) return;
+
+    if (!isTyping) {
+      setIsTyping(true);
+      socket.emit("typing", activeChatId);
+    }
+
+    // Stop typing indicator after 3 seconds of no keystrokes
+    let lastTypingTime = new Date().getTime();
+    setTimeout(() => {
+      let timeNow = new Date().getTime();
+      let timeDiff = timeNow - lastTypingTime;
+      if (timeDiff >= 3000 && isTyping) {
+        socket.emit("stop_typing", activeChatId);
+        setIsTyping(false);
+      }
+    }, 3000);
+  };
+
+  // Send message logic via socket
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (!inputText.trim()) return;
+
+    socket.emit("stop_typing", activeChatId);
+    setIsTyping(false);
 
     const now = new Date();
     const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     const newMessage = {
-      id: messages.length + 1,
-      sender: 'me',
       text: inputText,
+      chatId: { _id: activeChatId, participants: [{ _id: "emily_id" }] },
+      sender: { _id: "my_id" },
       time: timeString
     };
 
-    setMessages([...messages, newMessage]);
+    // Emit event to server
+    socket.emit("new_message", newMessage);
+
+    // Render locally immediately
+    setMessages([...messages, { id: messages.length + 1, sender: 'me', text: inputText, time: timeString }]);
     setInputText('');
-    setIsTyping(false); // Stop fake typing indicator when we reply
   };
 
   return (
@@ -60,15 +123,14 @@ function ChatWindow() {
         </div>
       </div>
 
-      {/* Messages Area */}
+      {/* Messages Render Area */}
       <div style={{ flex: 1, padding: '24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {messages.map((msg) => (
           <div key={msg.id} style={{ alignSelf: msg.sender === 'me' ? 'flex-end' : 'flex-start', maxWidth: '60%', display: 'flex', flexDirection: 'column', alignItems: msg.sender === 'me' ? 'flex-end' : 'flex-start' }}>
             
             {msg.type === 'audio' ? (
-              /* Audio Bubble */
               <div style={{ backgroundColor: '#f0f2f5', padding: '10px 16px', borderRadius: '18px 18px 18px 4px', display: 'flex', alignItems: 'center', gap: '12px', width: '240px' }}>
-                <button style={{ border: 'none', backgroundColor: '#7b57ff', color: '#fff', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', paddingLeft: '3px' }}>
+                <button type="button" style={{ border: 'none', backgroundColor: '#7b57ff', color: '#fff', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', paddingLeft: '3px' }}>
                   <FaPlay style={{ fontSize: '12px' }} />
                 </button>
                 <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '2px', height: '20px' }}>
@@ -79,7 +141,6 @@ function ChatWindow() {
                 <span style={{ fontSize: '11px', color: '#65676b' }}>{msg.duration}</span>
               </div>
             ) : (
-              /* Text Bubble */
               <div style={{ 
                 backgroundColor: msg.sender === 'me' ? '#7b57ff' : '#f0f2f5', 
                 color: msg.sender === 'me' ? '#ffffff' : '#1c1e21', 
@@ -99,8 +160,8 @@ function ChatWindow() {
           </div>
         ))}
 
-        {/* Typing Indicator */}
-        {isTyping && (
+        {/* Real-time Live Typing Status */}
+        {typingIndicator && (
           <div style={{ alignSelf: 'flex-start', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#45bd62', fontWeight: '500', marginLeft: '4px' }}>
             <span style={{ display: 'inline-block', width: '6px', height: '6px', backgroundColor: '#45bd62', borderRadius: '50%' }}></span>
             Emily is typing...
@@ -110,7 +171,7 @@ function ChatWindow() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Bottom Input Form Bar */}
+      {/* Bottom Input Area */}
       <form onSubmit={handleSendMessage} style={{ padding: '16px 24px', backgroundColor: '#ffffff', borderTop: '1px solid #f0f2f5', display: 'flex', alignItems: 'center', gap: '16px' }}>
         <button type="button" style={{ border: 'none', backgroundColor: '#7b57ff', color: '#ffffff', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '14px' }}>
           <FaPlus />
@@ -121,7 +182,7 @@ function ChatWindow() {
             type="text" 
             placeholder="Type a message..." 
             value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
+            onChange={handleInputChange}
             style={{ flex: 1, border: 'none', backgroundColor: 'transparent', outline: 'none', fontSize: '14px', color: '#1c1e21' }} 
           />
           <div style={{ display: 'flex', gap: '14px', color: '#65676b', fontSize: '18px', cursor: 'pointer', alignItems: 'center' }}>
@@ -142,4 +203,4 @@ function ChatWindow() {
 }
 
 export default ChatWindow;
-            
+      
