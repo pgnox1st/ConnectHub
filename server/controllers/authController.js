@@ -1,67 +1,52 @@
-import User from '../models/User.js';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 
-// Register a new user
-export const registerUser = async (req, res) => {
-  try {
-    const { username, email, password } = req.body;
+dotenv.config();
 
-    // Check if user already exists
-    const userExists = await User.findOne({ $or: [{ email }, { username }] });
-    if (userExists) {
-      return res.status(400).json({ message: 'Username or Email already exists' });
-    }
-
-    // Hash the password for security
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Create new user
-    const newUser = new User({
-      username,
-      email,
-      password: hashedPassword
-    });
-
-    await newUser.save();
-    res.status(201).json({ message: 'User registered successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
   }
-};
+});
 
-// Login user
-export const loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+app.use(cors());
+app.use(express.json());
 
-    // Find user by email
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' });
-    }
+// Base Route
+app.get('/', (req, res) => {
+  res.send('ConnectHub Backend Server is Running Perfectly!');
+});
 
-    // Check password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
-    }
+// Socket.io Connection Logic
+io.on('connection', (socket) => {
+  console.log('A user connected:', socket.id);
 
-    // Create JWT Token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+  socket.on('join_room', (data) => {
+    socket.join(data);
+    console.log(`User joined room: ${data}`);
+  });
 
-    res.status(200).json({
-      token,
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        avatar: user.avatar
-      }
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-};
-      
+  socket.on('send_message', (data) => {
+    socket.to(data.room).emit('receive_message', data);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
+  });
+});
+
+// MongoDB Connection
+const PORT = process.env.PORT || 5000;
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log('MongoDB Connected Successfully');
+    httpServer.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  })
+  .catch(err => console.log('Database Connection Error:', err));
