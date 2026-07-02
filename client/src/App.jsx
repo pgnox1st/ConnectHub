@@ -4,24 +4,28 @@ import Sidebar from './components/Sidebar/Sidebar.jsx';
 import ChatList from './components/ChatList/ChatList.jsx';
 import Header from './components/Header/Header.jsx';
 import ChatWindow from './components/ChatWindow/ChatWindow.jsx';
+import ProfileSidebar from './components/ProfileSidebar/ProfileSidebar.jsx';
 import Login from './components/Auth/Login.jsx';
 import Register from './components/Auth/Register.jsx';
 
-// Updated Premium Layout containing Sidebar + ChatList + Main Chat Area
+// Final Screenshot Matched Full Layout Structure
 const MainLayout = () => {
   return (
-    <div className="app-container">
-      {/* 1. Slim Left Sidebar */}
+    <div className="app-container" style={{ display: 'flex', width: '100vw', height: '100vh', overflow: 'hidden' }}>
+      {/* 1. Left Slim Sidebar */}
       <Sidebar />
 
-      {/* 2. Chat/Messages User List */}
+      {/* 2. Messages/Users List Panel */}
       <ChatList />
       
-      {/* 3. Main Content Area (Header + Open Chat) */}
-      <div className="main-content">
+      {/* 3. Center Main Chat Area (Header + Window) */}
+      <div className="main-content" style={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100%' }}>
         <Header />
         <ChatWindow />
       </div>
+
+      {/* 4. Right Sidebar User Details Panel */}
+      <ProfileSidebar />
     </div>
   );
 };
@@ -45,4 +49,3 @@ function App() {
 }
 
 export default App;
-        
