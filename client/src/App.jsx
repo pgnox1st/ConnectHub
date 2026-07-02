@@ -1,19 +1,23 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar/Sidebar.jsx';
+import ChatList from './components/ChatList/ChatList.jsx';
 import Header from './components/Header/Header.jsx';
 import ChatWindow from './components/ChatWindow/ChatWindow.jsx';
 import Login from './components/Auth/Login.jsx';
 import Register from './components/Auth/Register.jsx';
 
-// Main Chat Layout Component
+// Updated Premium Layout containing Sidebar + ChatList + Main Chat Area
 const MainLayout = () => {
   return (
     <div className="app-container">
-      {/* Sidebar on the left */}
+      {/* 1. Slim Left Sidebar */}
       <Sidebar />
+
+      {/* 2. Chat/Messages User List */}
+      <ChatList />
       
-      {/* Header and Chat Area on the right */}
+      {/* 3. Main Content Area (Header + Open Chat) */}
       <div className="main-content">
         <Header />
         <ChatWindow />
@@ -23,23 +27,17 @@ const MainLayout = () => {
 };
 
 function App() {
-  // Temporary authentication flag (Set to true later when user successfully logs in)
   const isAuthenticated = true; 
 
   return (
     <Router>
       <Routes>
-        {/* Auth Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
-        {/* Protected Main Chat Route */}
         <Route 
           path="/" 
           element={isAuthenticated ? <MainLayout /> : <Navigate to="/login" />} 
         />
-
-        {/* Redirect any other broken link to Home */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
