@@ -9,13 +9,12 @@ function Header() {
       borderBottom: '1px solid #e4e6eb',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'between',
-      padding: '0 20px',
-      justifyContent: 'space-between'
+      justifyContent: 'space-between',
+      padding: '0 20px'
     }}>
       <div style={{ display: 'flex', alignItems: 'center', backgroundColor: '#f0f2f5', padding: '8px 12px', borderRadius: '50px', width: '250px' }}>
         <FaSearch style={{ color: '#65676b', marginRight: '8px' }} />
-        <input type="text" placeholder="ConnectHub पर खोजें" style={{ border: 'none', backgroundColor: 'transparent', outline: 'none', width: '100%' }} />
+        <input type="text" placeholder="Search ConnectHub" style={{ border: 'none', backgroundColor: 'transparent', outline: 'none', width: '100%' }} />
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
         <button style={{ border: 'none', backgroundColor: '#f0f2f5', padding: '10px', borderRadius: '50%', cursor: 'pointer' }}>
@@ -31,4 +30,3 @@ function Header() {
 }
 
 export default Header;
-      
