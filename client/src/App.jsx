@@ -1,14 +1,18 @@
-import React from 'react'
+import React from 'react';
+import Sidebar from './components/Sidebar/Sidebar.jsx';
+import Header from './components/Header/Header.jsx';
+import ChatWindow from './components/ChatWindow/ChatWindow.jsx';
 
 function App() {
   return (
     <div className="app-container">
-      <div style={{ padding: '20px', textAlign: 'center', width: '100%' }}>
-        <h1>ConnectHub में आपका स्वागत है!</h1>
-        <p>आपकी सोशल मीडिया वेबसाइट का बेस सफलतापूर्वक तैयार हो गया है।</p>
+      <Sidebar />
+      <div className="main-content">
+        <Header />
+        <ChatWindow />
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
