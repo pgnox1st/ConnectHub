@@ -16,10 +16,10 @@ function Sidebar() {
         ConnectHub
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-        <button style={btnStyle}><FaHome style={iconStyle} /> होम</button>
-        <button style={{...btnStyle, backgroundColor: '#e7f3ff', color: '#1877f2'}}><FaComment style={iconStyle} /> चैट</button>
-        <button style={btnStyle}><FaUser style={iconStyle} /> प्रोफ़ाइल</button>
-        <button style={btnStyle}><FaCog style={iconStyle} /> सेटिंग्स</button>
+        <button style={btnStyle}><FaHome style={iconStyle} /> Home</button>
+        <button style={{...btnStyle, backgroundColor: '#e7f3ff', color: '#1877f2'}}><FaComment style={iconStyle} /> Chats</button>
+        <button style={btnStyle}><FaUser style={iconStyle} /> Profile</button>
+        <button style={btnStyle}><FaCog style={iconStyle} /> Settings</button>
       </div>
     </div>
   );
@@ -46,4 +46,3 @@ const iconStyle = {
 };
 
 export default Sidebar;
-  
