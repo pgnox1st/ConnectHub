@@ -1,6 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 
-function MessageInput() {
+function MessageInput({ sendMessage }) {
+
+  const [text, setText] = useState("");
+
+  const handleSend = () => {
+    if (!text.trim()) return;
+
+    sendMessage(text);
+    setText("");
+  };
+
   return (
     <footer className="inputBox">
 
@@ -10,6 +20,13 @@ function MessageInput() {
 
       <input
         type="text"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            handleSend();
+          }
+        }}
         placeholder="Message pgnox1st AI..."
       />
 
@@ -17,7 +34,10 @@ function MessageInput() {
         🎤
       </button>
 
-      <button title="Send">
+      <button
+        title="Send"
+        onClick={handleSend}
+      >
         ➤
       </button>
 
