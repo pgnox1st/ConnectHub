@@ -1,1 +1,10 @@
+{
+  "name": "connecthub-root",
+  "version": "1.0.0",
+  "scripts": {
+    "install-all": "npm install && cd client && npm install && cd ../server && npm install",
+    "build-client": "cd client && npm run build",
+    "start-server": "cd server && node server.js"
+  }
+}
 
