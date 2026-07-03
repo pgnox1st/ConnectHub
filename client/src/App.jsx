@@ -1,50 +1,59 @@
 import React from "react";
 import "./styles/global.css";
 import ChatHeader from "./components/ChatHeader";
+import Sidebar from "./components/Sidebar";
 
 function App() {
   return (
     <div className="app">
 
+      {/* Header */}
       <ChatHeader />
 
-      <main className="chat">
+      {/* Main Layout */}
+      <div className="main-layout">
 
-        <div className="ai">
+        {/* Left Sidebar */}
+        <Sidebar />
 
-          <div className="avatar">
-            🤖
+        {/* Chat Area */}
+        <main className="chat">
+
+          <div className="ai">
+
+            <div className="avatar">
+              🤖
+            </div>
+
+            <div className="bubble">
+
+              <h2>Welcome to pgnox1st AI</h2>
+
+              <br />
+
+              <p>Hello 👋</p>
+
+              <br />
+
+              <p>
+                I am <strong>pgnox1st AI v2.5</strong>, the official AI assistant of ConnectHub.
+              </p>
+
+              <br />
+
+              <p>
+                Ask me anything. I can help you with coding, chatting, images, ideas, and much more.
+              </p>
+
+            </div>
+
           </div>
 
-          <div className="bubble">
+        </main>
 
-            <h2>Welcome to pgnox1st AI</h2>
+      </div>
 
-            <br />
-
-            <p>
-              Hello 👋
-            </p>
-
-            <br />
-
-            <p>
-              I am <b>pgnox1st AI v2.5</b>, the official AI assistant of
-              ConnectHub.
-            </p>
-
-            <br />
-
-            <p>
-              Ask me anything...
-            </p>
-
-          </div>
-
-        </div>
-
-      </main>
-
+      {/* Bottom Input */}
       <footer className="inputBox">
 
         <button title="Attach File">
