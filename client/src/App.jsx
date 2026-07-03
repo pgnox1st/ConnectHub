@@ -14,6 +14,7 @@ const App = () => {
   const [isNexusProcessing, setIsNexusProcessing] = useState(false);
   const chatEndRef = useRef(null);
 
+  // Auto-scroll to the bottom of the chat
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatThreads, isNexusProcessing]);
@@ -25,6 +26,7 @@ const App = () => {
     const userText = messageDraft;
     const userImage = bufferedMediaAsset;
 
+    // Display user message immediately
     setChatThreads(prev => [...prev, {
       id: Date.now(),
       text: userText,
@@ -38,19 +40,20 @@ const App = () => {
     setIsNexusProcessing(true);
 
     try {
-      // Points directly to your Render backend web service
+      // Send request to backend
       const response = await fetch('https://connecthub-ai.onrender.com/api/chat', { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: userText,
           imageBuffer: userImage, 
-          mimeType: userImage ? userImage.substring(userImage.indexOf(":")+1, userImage.indexOf(";")) : null
+          mimeType: userImage ? userImage.substring(userImage.indexOf(":") + 1, userImage.indexOf(";")) : null
         })
       });
 
       const data = await response.json();
 
+      // Display AI response
       setChatThreads(prev => [...prev, {
         id: Date.now() + 1,
         text: data.reply || "No response received.",
@@ -61,7 +64,7 @@ const App = () => {
       console.error("Frontend Fetch Error:", err);
       setChatThreads(prev => [...prev, {
         id: Date.now() + 1,
-        text: "Sorry, I am facing connection trouble. Please ensure your backend web service is active.",
+        text: "Could not connect to the server. Please check your backend service status.",
         sender: 'nexus',
         systemTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }]);
@@ -82,115 +85,45 @@ const App = () => {
   return (
     <div style={{ background: '#131314', color: '#e3e3e3', minHeight: '100vh', display: 'flex', flexDirection: 'column', fontFamily: '"Segoe UI", Roboto, sans-serif' }}>
       
-      {/* Premium Header */}
-      <header style={{ padding: '16px 24px', borderBottom: '1px solid #2f2f30', display: 'flex', alignItems: 'center', justifyContent: 'between', background: '#1e1e20' }}>
+      {/* Header */}
+      <header style={{ padding: '16px 24px', borderBottom: '1px solid #2f2f30', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#1e1e20' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#4285f4' }}></div>
           <h1 style={{ fontSize: '18px', fontWeight: '600', margin: 0, color: '#fff' }}>pgnox1st AI</h1>
         </div>
-        <span style={{ fontSize: '12px', background: '#2f2f30', padding: '4px 8px', borderRadius: '12px', color: '#9aa0a6' }}>v2.0 Pro</span>
+        <span style={{ fontSize: '12px', background: '#2f2f30', padding: '4px 10px', borderRadius: '12px', color: '#9aa0a6' }}>v2.5 Live</span>
       </header>
 
-      {/* Chat Space */}
-      <main style={{ flex: 1, overflowY: 'auto', padding: '20px 16px', maxWidth: '800px', width: '100%', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      {/* Main Content */}
+      <main style={{ flex: 1, overflowY: 'auto', padding: '24px 16px', maxWidth: '750px', width: '100%', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
         {chatThreads.map((chat) => (
           <div key={chat.id} style={{ display: 'flex', gap: '16px', flexDirection: chat.sender === 'operator' ? 'row-reverse' : 'row', alignItems: 'start' }}>
-            
-            {/* Avatar Icons */}
-            <div style={{ 
-              width: '36px', 
-              height: '36px', 
-              borderRadius: '50%', 
-              background: chat.sender === 'operator' ? '#0056b3' : '#a142f4', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center',
-              fontWeight: 'bold',
-              fontSize: '14px',
-              color: '#fff',
-              flexShrink: 0
-            }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: chat.sender === 'operator' ? '#0056b3' : '#a142f4', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '13px', color: '#fff' }}>
               {chat.sender === 'operator' ? 'U' : 'AI'}
             </div>
-
-            {/* Bubble Layout */}
             <div style={{ display: 'flex', flexDirection: 'column', maxWidth: '75%', alignItems: chat.sender === 'operator' ? 'end' : 'start' }}>
-              <div style={{ 
-                padding: '12px 16px', 
-                borderRadius: '18px', 
-                background: chat.sender === 'operator' ? '#2b2a33' : '#1e1e20', 
-                color: '#e3e3e3',
-                fontSize: '15px',
-                lineHeight: '1.5',
-                border: chat.sender === 'operator' ? '1px solid #3c3b43' : '1px solid #2f2f30',
-                wordBreak: 'break-word'
-              }}>
-                {chat.attachedVisualStream && (
-                  <img src={chat.attachedVisualStream} alt="Uploaded attachment" style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '12px', marginBottom: '8px', display: 'block' }} />
-                )}
+              <div style={{ padding: '12px 18px', borderRadius: chat.sender === 'operator' ? '18px 4px 18px 18px' : '4px 18px 18px 18px', background: chat.sender === 'operator' ? '#2b2a33' : '#1e1e20', border: '1px solid #2f2f30' }}>
+                {chat.attachedVisualStream && <img src={chat.attachedVisualStream} alt="Attachment" style={{ maxWidth: '100%', borderRadius: '10px', marginBottom: '10px' }} />}
                 <div style={{ whiteSpace: 'pre-wrap' }}>{chat.text}</div>
               </div>
-              <small style={{ fontSize: '11px', color: '#80868b', marginTop: '4px', padding: '0 4px' }}>{chat.systemTime}</small>
+              <small style={{ fontSize: '11px', color: '#80868b', marginTop: '6px' }}>{chat.systemTime}</small>
             </div>
-
           </div>
         ))}
-
-        {/* Typing Loading Placeholder */}
-        {isNexusProcessing && (
-          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#a142f4', display: 'flex', alignItems: 'center', justify: 'center', fontWeight: 'bold', fontSize: '14px', color: '#fff' }}>AI</div>
-            <div style={{ color: '#80868b', fontSize: '14px', fontStyle: 'italic', display: 'flex', alignItems: 'center', gap: '5px' }}>
-              <span>Thinking</span>
-              <span style={{ animation: 'blink 1.4s infinite both' }}>...</span>
-            </div>
-          </div>
-        )}
+        {isNexusProcessing && <div style={{ color: '#80868b', fontSize: '14px' }}>Thinking...</div>}
         <div ref={chatEndRef} />
       </main>
 
-      {/* Modern Fixed Footer Dock */}
+      {/* Footer */}
       <footer style={{ padding: '16px', background: '#131314', borderTop: '1px solid #2f2f30' }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          
-          {/* Preview Image Thumb */}
-          {bufferedMediaAsset && (
-            <div style={{ position: 'relative', display: 'inline-block', alignSelf: 'start', padding: '4px', background: '#1e1e20', borderRadius: '8px', border: '1px solid #2f2f30' }}>
-              <img src={bufferedMediaAsset} alt="Preview" style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '6px' }} />
-              <button onClick={() => setBufferedMediaAsset(null)} style={{ position: 'absolute', top: '-6px', right: '-6px', background: '#ea4335', color: '#fff', border: 'none', borderRadius: '50%', width: '18px', height: '18px', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>×</button>
-            </div>
-          )}
-
-          {/* Controls Deck */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#1e1e20', borderRadius: '28px', padding: '6px 12px', border: '1px solid #2f2f30' }}>
-            
-            {/* Attachment Pin Icon */}
-            <label style={{ cursor: 'pointer', padding: '8px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#2f2f30', color: '#fff' }}>
-              <span style={{ fontSize: '18px' }}>📎</span>
-              <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
-            </label>
-
-            {/* Core Text Input */}
-            <input 
-              type="text" 
-              value={messageDraft} 
-              onChange={(e) => setMessageDraft(e.target.value)} 
-              placeholder="Ask pgnox1st AI anything..." 
-              style={{ flex: 1, padding: '10px 4px', background: 'transparent', border: 'none', color: '#fff', fontSize: '15px', outline: 'none' }}
-              onKeyDown={(e) => e.key === 'Enter' && shipTerminalMessage()}
-            />
-
-            {/* Send Paper Rocket Button */}
-            <button onClick={shipTerminalMessage} style={{ padding: '10px 18px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '20px', cursor: 'pointer', fontWeight: '600', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-              <span>Send</span>
-              <span>🚀</span>
-            </button>
-
+        <div style={{ maxWidth: '750px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#1e1e20', borderRadius: '28px', padding: '8px 16px', border: '1px solid #2f2f30' }}>
+            <label style={{ cursor: 'pointer', fontSize: '18px' }}>📎<input type="file" onChange={handleImageChange} style={{ display: 'none' }} /></label>
+            <input type="text" value={messageDraft} onChange={(e) => setMessageDraft(e.target.value)} placeholder="Ask pgnox1st AI..." style={{ flex: 1, background: 'transparent', border: 'none', color: '#fff', outline: 'none' }} onKeyDown={(e) => e.key === 'Enter' && shipTerminalMessage()} />
+            <button onClick={shipTerminalMessage} style={{ background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '20px', padding: '8px 18px' }}>Send</button>
           </div>
-          <p style={{ fontSize: '11px', color: '#606468', textAlign: 'center', margin: '4px 0 0 0' }}>pgnox1st AI can make mistakes. Verify important info.</p>
         </div>
       </footer>
-
     </div>
   );
 };
