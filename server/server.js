@@ -6,7 +6,9 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 dotenv.config();
 
 const app = express();
-app.use(cors({ origin: "https://connect-hub-silk.vercel.app" }));
+
+// CORS को "*" कर दिया है ताकि फ्रंटएंड और बैकएंड आराम से बात कर सकें
+app.use(cors({ origin: "*" }));
 app.use(express.json({ limit: '50mb' }));
 
 // Google Gemini Setup
@@ -15,7 +17,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 app.post('/api/chat', async (req, res) => {
     try {
         const { message } = req.body;
-        // gemini-pro ज्यादातर अकाउंट्स पर तुरंत काम करता है
+        // gemini-pro का इस्तेमाल जारी है
         const model = genAI.getGenerativeModel({ model: "gemini-pro" });
         const result = await model.generateContent(message);
         const response = await result.response;
