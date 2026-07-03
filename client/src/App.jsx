@@ -49,7 +49,7 @@ const App = () => {
       }]);
     } catch (err) {
       console.error("Frontend Fetch Error:", err);
-    } finaly {
+    } finally {
       setIsNexusProcessing(false); // Turn off loading state
     }
   };
@@ -107,4 +107,3 @@ const App = () => {
 };
 
 export default App;
-                                                    
