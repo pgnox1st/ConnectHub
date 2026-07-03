@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { GoogleGenAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 
 dotenv.config();
 
@@ -9,33 +9,49 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
-const aiKey = process.env.GEMINI_API_KEY;
-const aiStudio = new GoogleGenAI({ apiKey: aiKey });
+// Initialize the Google Generative AI client
+const aiStudio = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 app.post('/api/chat', async (req, res) => {
   try {
     const { message, imageBuffer, mimeType } = req.body;
-    const model = aiStudio.getGenerativeModel({ model: "gemini-1.5-flash" });
-    let promptContents = [message || "Analyze this context"];
 
+    if (!message && !imageBuffer) {
+      return res.status(400).json({ reply: "Please provide a message or an image." });
+    }
+
+    const contents = [];
+
+    // Handle image input
     if (imageBuffer && mimeType) {
-      promptContents.unshift({
+      const base64Data = imageBuffer.split(',')[1] || imageBuffer;
+      contents.push({
         inlineData: {
-          data: imageBuffer.split(',')[1],
+          data: base64Data,
           mimeType: mimeType
         }
       });
     }
 
-    const aiResult = await model.generateContent(promptContents);
-    const aiResponseText = await aiResult.response.text();
-    res.json({ reply: aiResponseText });
-  } catch (error) {
-    console.error("AI Core Error:", error);
-    res.status(500).json({ reply: "कनेक्शन में थोड़ी दिक्कत है। कृपया दोबारा प्रयास करें।" });
+    // Handle text input
+    if (message) {
+      contents.push({ text: message });
+    }
+
+    // Call the Gemini 1.5 Flash model
+    const response = await aiStudio.models.generateContent({
+      model: 'gemini-1.5-flash',
+      contents: contents,
+    });
+
+    res.json({ reply: response.text });
+
+  } catch (err) {
+    console.error("Gemini Backend Error:", err);
+    res.status(500).json({ reply: "Error processing your request with Gemini AI." });
   }
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`AI Backend Operational on Port ${PORT}`));
-  
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+      
