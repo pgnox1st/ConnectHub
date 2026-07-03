@@ -1,84 +1,50 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// Load environment variables from .env file
+// Initialize environment variables
 dotenv.config();
 
 const app = express();
-
-// Enable Cross-Origin Resource Sharing (CORS) for frontend connection
 app.use(cors());
+app.use(express.json());
 
-// Increase JSON payload limit to handle large Base64 image streams smoothly
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+// Initialize the Google Generative AI client
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// Validate the presence of the Google Gemini API Key
-const geminiApiKey = process.env.GEMINI_API_KEY;
-if (!geminiApiKey) {
-  console.error("CRITICAL ERROR: GEMINI_API_KEY is missing in your environment variables!");
-}
-
-// Initialize the official Google Gen AI Client SDK
-const aiStudio = new GoogleGenAI({ apiKey: geminiApiKey });
-
-// Main Chat Endpoint to handle Multimodal (Text + Image) requests
+// Chat endpoint to communicate with Gemini
 app.post('/api/chat', async (req, res) => {
-  try {
-    const { message, imageBuffer, mimeType } = req.body;
+    try {
+        const { message } = req.body;
 
-    // Return bad request if both text input and image attachment are absent
-    if (!message && !imageBuffer) {
-      return res.status(400).json({ reply: "Payload Error: Please provide either a text message or an image asset." });
-    }
-
-    // Prepare structured array container for Gemini API content processing
-    const requestContents = [];
-
-    // Parse and append image data if sent by the client operator
-    if (imageBuffer && mimeType) {
-      // Strip out the Base64 metadata prefix if present
-      const cleanBase64Data = imageBuffer.includes(',') ? imageBuffer.split(',')[1] : imageBuffer;
-      
-      requestContents.push({
-        inlineData: {
-          data: cleanBase64Data,
-          mimeType: mimeType
+        if (!message) {
+            return res.status(400).json({ reply: "Message is required." });
         }
-      });
+        
+        // Select the model
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+        // Generate content based on user message
+        const result = await model.generateContent(message);
+        const response = await result.response;
+        const text = response.text();
+
+        // Send the AI response back to the frontend
+        res.json({ reply: text });
+        
+    } catch (error) {
+        console.error("Error processing AI request:", error);
+        res.status(500).json({ reply: "Error: Could not get a response from the AI." });
     }
-
-    // Append text prompt query if provided by the client operator
-    if (message) {
-      requestContents.push({ text: message });
-    }
-
-    console.log("Sending optimized payload request to gemini-1.5-flash model...");
-
-    // Execute generation using the high-performance Gemini 1.5 Flash model
-    const aiResponse = await aiStudio.models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: requestContents,
-    });
-
-    // Safely extract text output response and send back to frontend client
-    const generatedReply = aiResponse.text || "I processed the request but no text output was generated.";
-    return res.status(200).json({ reply: generatedReply });
-
-  } catch (error) {
-    console.error("Comprehensive Gemini Backend Core Failure:", error);
-    return res.status(500).json({ 
-      reply: "System Error: The AI backend encountered an issue processing this request. Please ensure Render Environment Variables are correct." 
-    });
-  }
 });
 
-// Root checking status endpoint
+// Root endpoint for status check
 app.get('/', (req, res) => {
-  res.send("pgnox1st AI Core Backend Web Service is fully operational.");
+    res.send("Backend server is running successfully.");
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`[DEPLOY SUCCESS] Server initialized on network port: ${PORT}`));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
