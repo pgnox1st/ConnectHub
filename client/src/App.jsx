@@ -1,498 +1,303 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 // ========================================================
-// 1. GLOBAL ENCRYPTED CORE MOCK DATABASE
+// 1. INTELLIGENT AI ENGINE (NEXUS-AI) WITH IMAGE SUPPORT
 // ========================================================
-const MASTER_CONTACTS_REGISTRY = {
-  701: {
-    id: 701,
-    name: "Olivia Taylor",
-    phone: "+91 91122 33445",
-    email: "olivia.t@connecthub.io",
-    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150",
-    status: "online",
-    bio: "Code | Design | Repeat 🚀",
-    unreadCount: 0,
-    messages: [
-      { id: 1, text: "Missed voice pipeline connection.", time: "04:00 AM", type: "inbound", media: null },
-      { id: 2, text: "Hey! Let's sync the frontend deployment layout today.", time: "08:15 AM", type: "inbound", media: null }
-    ],
-    aiPersonaPrompt: "You are Olivia Taylor, a sharp product developer. Reply professionally, guide technical tasks, and use modern tech terminology."
-  },
-  702: {
-    id: 702,
-    name: "Sophia Martinez",
-    phone: "+91 92233 44556",
-    email: "sophia.m@designhub.com",
-    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150",
-    status: "online",
-    bio: "Pixel perfect enthusiast ✨",
-    unreadCount: 2,
-    messages: [
-      { id: 1, text: "🎙️ Transmitting dynamic audio waveform log...", time: "Yesterday", type: "inbound", isAudio: true }
-    ],
-    aiPersonaPrompt: "You are Sophia, a creative UI designer. Speak artistically, use design words like aesthetic, composition, palettes, and add emojis."
-  },
-  703: {
-    id: 703,
-    name: "Noah Wilson",
-    phone: "+91 93344 55667",
-    email: "noah.dev@backend.net",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150",
-    status: "offline",
-    bio: "Databases are beautiful.",
-    unreadCount: 0,
-    messages: [
-      { id: 1, text: "Server clusters are operating at nominal capacity.", time: "2 days ago", type: "inbound", media: null }
-    ],
-    aiPersonaPrompt: "You are Noah, a rigorous system architect. Use short, blunt sentences and focus heavily on data, structure, and optimization."
+const getNexusAIResponse = (userMessage, hasImage = false) => {
+  const msg = userMessage.toLowerCase().trim();
+
+  if (hasImage) {
+    return "I have analyzed the image/screenshot you shared! 📸 It looks like a great layout. Tell me, do you want to modify its CSS styling, add responsiveness, or connect it to an API? I'm ready to help you build it step-by-step!";
   }
+  
+  if (msg.includes("hello") || msg.includes("hi") || msg.includes("hey")) {
+    return "Hey there! I am Nexus-AI, your development copilot. I can help you write code, design UI, and fix bugs. What amazing feature are we building today? 🚀";
+  }
+  
+  if (msg.includes("how are you")) {
+    return "I'm running at peak performance! Fully optimized and ready to assist you. How is your project coding going?";
+  }
+
+  if (msg.includes("help") || msg.includes("error") || msg.includes("bug")) {
+    return "Don't worry! Share the error message or paste the code snippet here. We will debug it together step-by-step just like a pro team. 💻🛠️";
+  }
+
+  if (msg.includes("clear") || msg.includes("reset")) {
+    return "Understood. Let's start fresh! Tell me your requirements.";
+  }
+
+  return `Interesting query! Regarding "${userMessage}", we can implement this effectively. Do you want me to generate the functional React components or structure the database model for this? Let me know! ⚡`;
 };
 
-const SEED_STORIES = [
-  { id: 1, name: "My Status", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150", time: "Just now", viewed: false },
-  { id: 2, name: "Sophia", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150", time: "25 minutes ago", viewed: false },
-  { id: 3, name: "Olivia", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150", time: "1 hour ago", viewed: true }
-];
+export default function SecureAiApp() {
+  // Navigation States: 'register' -> 'login' -> 'otp' -> 'chat-room'
+  const [screen, setScreen] = useState('register'); 
+  
+  // Simulated Database Local State
+  const [registeredUser, setRegisteredUser] = useState(null);
 
-const SEED_CALLS = [
-  { id: 1, name: "Olivia Taylor", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150", time: "Today, 09:36 AM", type: "voice", incoming: true, missed: true },
-  { id: 2, name: "Sophia Martinez", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150", time: "Yesterday, 04:12 PM", type: "video", incoming: false, missed: false }
-];
+  // Form Input States
+  const [regForm, setRegForm] = useState({ email: '', phone: '', password: '' });
+  const [loginForm, setLoginForm] = useState({ email: '', password: '' });
+  const [inputOtp, setInputOtp] = useState('');
+  const [generatedOtp, setGeneratedOtp] = useState('');
 
-// ========================================================
-// 2. MAIN CORE MASTER SYSTEM COMPONENT
-// ========================================================
-export default function UltimateWhatsAppEngine() {
-  // Application Window App Router
-  const [appScreen, setAppScreen] = useState('auth-gateway'); // auth-gateway, otp-pipeline, dashboard-view, settings-workspace, full-screen-media
-  const [dashboardTab, setDashboardTab] = useState('chats-directory'); // chats-directory, status-feed, call-logs
-  const [selectedContactId, setSelectedContactId] = useState(701);
-  const [activeSettingsPanel, setActiveSettingsPanel] = useState('profile-hub');
+  // Chat Room States
+  const [chatMessages, setChatMessages] = useState([
+    { id: 1, text: "System Booted. Hello! I am Nexus-AI, your dedicated assistant. You can chat with me, upload designs/images, and ask any coding or layout help!", sender: 'ai', time: 'Just Now', image: null }
+  ]);
+  const [textInput, setTextInput] = useState('');
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isAiTyping, setIsAiTyping] = useState(false);
+  
+  const chatBottomRef = useRef(null);
 
-  // Interactive Live Chat Real-time Simulation Engine Data State
-  const [chatDatabase, setChatDatabase] = useState(MASTER_CONTACTS_REGISTRY);
-  const [textInputField, setTextInputField] = useState('');
-  const [isPeerTyping, setIsPeerTyping] = useState(false);
-  const [stagedMediaPacket, setStagedMediaPacket] = useState(null); 
-  const [mediaPreviewContext, setMediaPreviewContext] = useState(null);
-
-  // Auth Multi-Factor Telemetry State
-  const [authFormFields, setAuthFormFields] = useState({ email: '', phone: '', credentialsToken: '' });
-  const [receivedOtpToken, setReceivedOtpToken] = useState('');
-
-  // Global Multi-Theme Global App Configuration Engine
-  const [userProfileIdentity, setUserProfileIdentity] = useState({
-    fullName: "John Doe",
-    registeredPhone: "+91 98765 43210",
-    registeredEmail: "johndoe@connecthub.com",
-    avatarUrl: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150",
-    customBioText: "Available | Building the future of networks."
-  });
-
-  const [globalPrivacyPolicy, setGlobalPrivacyPolicy] = useState({ lastSeenOption: 'Everyone', profilePhotoOption: 'My Contacts', readReceiptsActive: true });
-  const [globalChatCustomizer, setGlobalChatCustomizer] = useState({ uiMode: 'dark', chatBackgroundLayout: 'doodle-matrix', typographyWeight: '14.5px' });
-
-  const messageLayoutScrollerAnchor = useRef(null);
-
+  // Request Notification Permission on Load
   useEffect(() => {
-    if (messageLayoutScrollerAnchor.current) {
-      messageLayoutScrollerAnchor.current.scrollIntoView({ behavior: 'smooth' });
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission();
     }
-  }, [chatDatabase, selectedContactId, isPeerTyping, appScreen]);
+  }, []);
+
+  // Auto Scroll Chat
+  useEffect(() => {
+    if (chatBottomRef.current) {
+      chatBottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [chatMessages, isAiTyping]);
 
   // ========================================================
-  // 3. UNDERCOVER AI AUTOMATION CORE HANDLING PIPELINE
+  // 2. VALIDATION & SECURITY HANDLERS
   // ========================================================
-  const executeUndercoverAIProcessingEngine = (targetChatId, incomingUserMsgText) => {
-    setIsPeerTyping(true);
-
-    setTimeout(() => {
-      setIsPeerTyping(false);
-      const clockStamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      
-      setChatDatabase(prevDatabase => {
-        const structuralProfile = prevDatabase[targetChatId];
-        if (!structuralProfile) return prevDatabase;
-
-        let dynamicCalculatedResponse = "System message correctly synchronized across network frames. No parsing errors detected.";
-        const normalText = incomingUserMsgText.toLowerCase();
-
-        // Advanced Content Parser & Simulated Multi-Model Intent Recognizer
-        if (normalText.includes("hi") || normalText.includes("hello") || normalText.includes("hey")) {
-          dynamicCalculatedResponse = `Hey! Thanks for connecting back. I was just adjusting some pipeline assets. What's the schedule today?`;
-        } else if (normalText.includes("photo") || normalText.includes("image") || normalText.includes("video") || normalText.includes("media")) {
-          dynamicCalculatedResponse = "Wow! The media transmission completed seamlessly. The clarity looks stunning on my display array! 📸✨";
-        } else if (normalText.includes("status") || normalText.includes("render") || normalText.includes("code")) {
-          dynamicCalculatedResponse = "The architecture build deployment status on Render is fully active and validated.";
-        } else if (normalText.includes("work") || normalText.includes("project")) {
-          dynamicCalculatedResponse = "Let's review the final staging builds before deploying to production servers.";
-        }
-
-        const structuralMessageNode = {
-          id: Date.now() + 9,
-          text: dynamicCalculatedResponse,
-          time: clockStamp,
-          type: "inbound",
-          media: null
-        };
-
-        return {
-          ...prevDatabase,
-          [targetChatId]: {
-            ...structuralProfile,
-            messages: [...structuralProfile.messages, structuralMessageNode]
-          }
-        };
-      });
-    }, 2200);
+  
+  const validateEmail = (email) => {
+    return String(email).toLowerCase().match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
   };
 
-  // Dispatch Outbound Message Node Link Loop
-  const dispatchMessagePacketPayload = () => {
-    if (!textInputField.trim() && !stagedMediaPacket) return;
+  // Trigger Real System Push Notification
+  const triggerRealNotification = (otpCode) => {
+    if ("Notification" in window && Notification.permission === "granted") {
+      new Notification("Nexus Security Alert", {
+        body: `Your Secure 6-Digit Verification OTP is: ${otpCode}`,
+        icon: "https://cdn-icons-png.flaticon.com/512/891/891399.png"
+      });
+    }
+  };
 
-    const systemClockTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const targetScopeId = selectedContactId;
+  // Step A: Registration Submit
+  const handleRegisterSubmit = (e) => {
+    e.preventDefault();
+    
+    if (!validateEmail(regForm.email)) {
+      window.Swal.fire({ icon: 'error', title: 'Invalid Email!', text: 'Please enter a valid email address.', confirmButtonColor: '#ea0038' });
+      return;
+    }
+    if (regForm.phone.length !== 10 || isNaN(regForm.phone)) {
+      window.Swal.fire({ icon: 'error', title: 'Invalid Phone!', text: 'Phone number must be exactly 10 digits.', confirmButtonColor: '#ea0038' });
+      return;
+    }
+    if (regForm.password.length < 6) {
+      window.Swal.fire({ icon: 'error', title: 'Weak Password!', text: 'Password must be at least 6 characters long.', confirmButtonColor: '#ea0038' });
+      return;
+    }
 
-    const structuralOutputMessageNode = {
-      id: Date.now(),
-      text: textInputField || `📷 Transmitted attachment: [${stagedMediaPacket.assetClass.toUpperCase()}]`,
-      time: systemClockTime,
-      type: "outbound",
-      media: stagedMediaPacket
+    setRegisteredUser({ ...regForm });
+    window.Swal.fire({ icon: 'success', title: 'Account Created!', text: 'Registration successful. Please login now.', confirmButtonColor: '#00a884', timer: 2000 });
+    setScreen('login');
+  };
+
+  // Step B: Login Submit & Trigger OTP
+  const handleLoginSubmit = (e) => {
+    e.preventDefault();
+
+    if (!registeredUser) {
+      window.Swal.fire({ icon: 'warning', title: 'No Record Found!', text: 'Please register an account first.', confirmButtonColor: '#ffb300' });
+      return;
+    }
+
+    if (loginForm.email !== registeredUser.email || loginForm.password !== registeredUser.password) {
+      window.Swal.fire({ icon: 'error', title: 'Incorrect Credentials!', text: 'The email or password you entered is incorrect.', confirmButtonColor: '#ea0038' });
+      return;
+    }
+
+    // Generate Random 6-Digit OTP
+    const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    setGeneratedOtp(newOtp);
+
+    // Trigger both Web Push Notification and SweetAlert Backup View
+    triggerRealNotification(newOtp);
+
+    window.Swal.fire({
+      icon: 'info',
+      title: 'Security OTP Sent!',
+      html: `A 6-digit OTP code has been sent via system notification to your device.<br><br><span style="font-size: 18px; color: #00a884; font-weight: bold;">(Fallback Display: ${newOtp})</span>`,
+      confirmButtonColor: '#00a884'
+    });
+
+    setScreen('otp');
+  };
+
+  // Step C: Verify 6-Digit OTP
+  const handleVerifyOtpSubmit = (e) => {
+    e.preventDefault();
+
+    if (inputOtp !== generatedOtp) {
+      window.Swal.fire({ icon: 'error', title: 'Incorrect OTP!', text: 'The 6-digit verification token is invalid. Please check your notifications and try again.', confirmButtonColor: '#ea0038' });
+      return;
+    }
+
+    window.Swal.fire({ icon: 'success', title: 'Access Granted!', text: 'Welcome to Nexus-AI Terminal Panel.', confirmButtonColor: '#00a884', timer: 2000 });
+    setScreen('chat-room');
+  };
+
+  // Handle Image Selection
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Step D: Message Dispatch with Image
+  const handleSendMessage = () => {
+    if (!textInput.trim() && !selectedImage) return;
+
+    const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const userMsgNode = { 
+      id: Date.now(), 
+      text: textInput, 
+      sender: 'user', 
+      time: currentTime,
+      image: selectedImage 
     };
 
-    setChatDatabase(prev => ({
-      ...prev,
-      [targetScopeId]: {
-        ...prev[targetScopeId],
-        messages: [...prev[targetScopeId].messages, structuralOutputMessageNode]
-      }
-    }));
+    setChatMessages(prev => [...prev, userMsgNode]);
+    
+    const cachedText = textInput;
+    const cachedImage = selectedImage;
+    
+    setTextInput('');
+    setSelectedImage(null);
 
-    const cachedTextData = textInputField;
-    setTextInputField('');
-    setStagedMediaPacket(null);
-
-    // Call Undercover AI Context Pipeline Engine
-    executeUndercoverAIProcessingEngine(targetScopeId, cachedTextData);
+    // Simulate AI Processing Output Delay
+    setIsAiTyping(true);
+    setTimeout(() => {
+      setIsAiTyping(false);
+      const aiResponseText = getNexusAIResponse(cachedText, !!cachedImage);
+      const aiMsgNode = { 
+        id: Date.now() + 1, 
+        text: aiResponseText, 
+        sender: 'ai', 
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        image: null
+      };
+      setChatMessages(prev => [...prev, aiMsgNode]);
+    }, 1500);
   };
-
-  // Inject File Media Simulation
-  const handleSimulatedMediaIngestion = (assetClass) => {
-    if (assetClass === 'image') {
-      setStagedMediaPacket({
-        assetClass: 'image',
-        sourceUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500'
-      });
-    } else {
-      setStagedMediaPacket({
-        assetClass: 'video',
-        sourceUrl: 'https://www.w3schools.com/html/mov_bbb.mp4'
-      });
-    }
-  };
-
-  const selectedChatContext = chatDatabase[selectedContactId];
 
   return (
-    <div style={{ ...styles.appViewportContainerFrame, backgroundColor: globalChatCustomizer.uiMode === 'dark' ? '#0b141a' : '#f0f2f5', color: globalChatCustomizer.uiMode === 'dark' ? '#e9edef' : '#111b21' }}>
+    <div style={styles.appWrapper}>
       
-      {/* ========================================================
-          GATEWAY SCREEN 1: MULTI-FACTOR AUTH SUB-FRAME SYSTEM
-          ======================================================== */}
-      {appScreen === 'auth-gateway' && (
-        <div style={styles.authViewportModuleDeckCenterBox}>
-          <div style={styles.brandLogoCircleGraphicWrapper}>💬</div>
-          <h1 style={styles.authGlobalBrandHeaderTitle}>ConnectHub Linking Service</h1>
-          <p style={styles.authSubtextHelperStringParagraph}>Enter registration endpoints to synchronize instant messaging nodes.</p>
-          
-          <div style={styles.authFormVerticalStackPanelBox}>
-            <input type="email" placeholder="Email Node Address (e.g. user@domain.com)" value={authFormFields.email} onChange={e => setAuthFormFields({...authFormFields, email: e.target.value})} style={styles.authNativeInputBoxControlElement} />
-            <input type="tel" placeholder="Mobile Verification Node Phone (+91...)" value={authFormFields.phone} onChange={e => setAuthFormFields({...authFormFields, phone: e.target.value})} style={styles.authNativeInputBoxControlElement} />
-            <input type="password" placeholder="Secure Connection Key Access Token" value={authFormFields.credentialsToken} onChange={e => setAuthFormFields({...authFormFields, credentialsToken: e.target.value})} style={styles.authNativeInputBoxControlElement} />
-            
-            <button onClick={() => { if(authFormFields.email && authFormFields.phone) { setAppScreen('otp-pipeline'); } else { alert('Please provide fully verified networking data strings.'); } }} style={styles.authPrimaryActionSubmitBtnElement}>
-              Generate Secure SMS/Email OTP Routing Channel
-            </button>
-          </div>
+      {/* 1. REGISTER CARD */}
+      {screen === 'register' && (
+        <div style={styles.authCard}>
+          <h2 style={styles.title}>Create Account</h2>
+          <p style={styles.subtitle}>Join Nexus-AI Secure System Portal</p>
+          <form onSubmit={handleRegisterSubmit} style={styles.form}>
+            <input type="email" placeholder="Email Address" value={regForm.email} onChange={e => setRegForm({...regForm, email: e.target.value})} style={styles.input} required />
+            <input type="tel" placeholder="10-Digit Mobile Number" value={regForm.phone} onChange={e => setRegForm({...regForm, phone: e.target.value})} maxLength={10} style={styles.input} required />
+            <input type="password" placeholder="Create Password" value={regForm.password} onChange={e => setRegForm({...regForm, password: e.target.value})} style={styles.input} required />
+            <button type="submit" style={styles.btn}>Register ➔</button>
+          </form>
+          <p style={styles.toggleText}>Already have an account? <span onClick={() => setScreen('login')} style={styles.link}>Login</span></p>
         </div>
       )}
 
-      {/* ========================================================
-          GATEWAY SCREEN 2: HIGH SECURITY OTP PIPELINE VALIDATOR
-          ======================================================== */}
-      {appScreen === 'otp-pipeline' && (
-        <div style={styles.authViewportModuleDeckCenterBox}>
-          <div style={styles.brandLogoCircleGraphicWrapper}>🔒</div>
-          <h1 style={styles.authGlobalBrandHeaderTitle}>Enter Network Core Security OTP</h1>
-          <p style={styles.authSubtextHelperStringParagraph}>Security token layer routed to endpoints. Input <b style={{color: '#00a884'}}>1234</b> to authorize verification sequence.</p>
-          
-          <div style={styles.authFormVerticalStackPanelBox}>
-            <input type="text" placeholder="• • • •" value={receivedOtpToken} onChange={e => setReceivedOtpToken(e.target.value)} style={{ ...styles.authNativeInputBoxControlElement, textAlign: 'center', fontSize: '24px', letterSpacing: '10px' }} maxLength={4} />
-            
-            <button onClick={() => { if(receivedOtpToken === '1234') { setUserProfileIdentity(prev => ({...prev, registeredEmail: authFormFields.email, registeredPhone: authFormFields.phone})); setAppScreen('dashboard-view'); } else { alert('Security core validation faulted. Re-input network key token.'); } }} style={styles.authPrimaryActionSubmitBtnElement}>
-              Finalize Synchronization & Initialize Core Pipeline
-            </button>
-            <button onClick={() => setAppScreen('auth-gateway')} style={styles.authSecondaryAlternativeActionLinkBtn}>Modify Gateway Configuration Handlers</button>
-          </div>
+      {/* 2. LOGIN CARD */}
+      {screen === 'login' && (
+        <div style={styles.authCard}>
+          <h2 style={styles.title}>Secure Login Gateway</h2>
+          <p style={styles.subtitle}>Provide your registered credentials</p>
+          <form onSubmit={handleLoginSubmit} style={styles.form}>
+            <input type="email" placeholder="Enter Registered Email" value={loginForm.email} onChange={e => setLoginForm({...loginForm, email: e.target.value})} style={styles.input} required />
+            <input type="password" placeholder="Enter Password" value={loginForm.password} onChange={e => setLoginForm({...loginForm, password: e.target.value})} style={styles.input} required />
+            <button type="submit" style={styles.btn}>Verify & Request OTP</button>
+          </form>
+          <p style={styles.toggleText}>Need a new account? <span onClick={() => setScreen('register')} style={styles.link}>Register Here</span></p>
         </div>
       )}
 
-      {/* ========================================================
-          CORE SCREEN 3: WHATSAPP FULL RUNTIME APPLICATION DASHBOARD
-          ======================================================== */}
-      {appScreen === 'dashboard-view' && (
-        <div style={styles.mainDashboardTwoColumnLayoutSplitViewport}>
-          
-          {/* DIRECTORY FEED CHANNELS MATRIX GRID - LEFT SECTION */}
-          <div style={{ ...styles.dashboardDirectorySidebarLeftRailPane, background: globalChatCustomizer.uiMode === 'dark' ? '#111b21' : '#ffffff', borderRight: globalChatCustomizer.uiMode === 'dark' ? '1px solid #222e35' : '1px solid #e9edef' }}>
-            <div style={{ ...styles.dashboardLeftPanelHeaderToolbarRow, background: globalChatCustomizer.uiMode === 'dark' ? '#202c33' : '#f0f2f5' }}>
-              <img src={userProfileIdentity.avatarUrl} alt="Active Identity Anchor" style={styles.userProfileIdentityAvatarCircularThumbnailImgNode} onClick={() => setAppScreen('settings-workspace')} title="Edit Profile Configurations" />
-              <div style={{ display: 'flex', gap: '20px', color: '#aebac1', fontSize: '18px', cursor: 'pointer' }}>
-                <span onClick={() => setAppScreen('settings-workspace')} title="Open Matrix Configuration Settings">⚙️ Control Hub</span>
+      {/* 3. 6-DIGIT OTP CARD */}
+      {screen === 'otp' && (
+        <div style={styles.authCard}>
+          <h2 style={styles.title}>Enter Safety Token</h2>
+          <p style={styles.subtitle}>Check your device notifications for the 6-digit OTP</p>
+          <form onSubmit={handleVerifyOtpSubmit} style={styles.form}>
+            <input type="text" placeholder="------" value={inputOtp} onChange={e => setInputOtp(e.target.value)} maxLength={6} style={{ ...styles.input, textAlign: 'center', fontSize: '24px', letterSpacing: '8px', color: '#00a884' }} required />
+            <button type="submit" style={styles.btn}>Validate OTP Token ✅</button>
+          </form>
+        </div>
+      )}
+
+      {/* 4. UPGRADED NEXUS-AI WORKSPACE INTERFACE */}
+      {screen === 'chat-room' && (
+        <div style={styles.chatContainer}>
+          {/* Header Bar */}
+          <div style={styles.chatHeader}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={styles.statusDot}></div>
+              <div>
+                <b style={{ fontSize: '16px', color: '#ffffff' }}>Nexus-AI Workspace Terminal</b>
+                <span style={{ fontSize: '12px', color: '#00a884', display: 'block' }}>Active Help Agent Mode</span>
               </div>
             </div>
-
-            {/* Custom Tab Router Controller Bar Header */}
-            <div style={{ ...styles.dashboardCategoryNavigationTabStripRowBar, background: globalChatCustomizer.uiMode === 'dark' ? '#111b21' : '#ffffff' }}>
-              {['chats-directory', 'status-feed', 'call-logs'].map(tabKey => (
-                <div key={tabKey} onClick={() => setDashboardTab(tabKey)} style={{ ...styles.dashboardTabHeaderClickableActionNode, color: dashboardTab === tabKey ? '#00a884' : '#8696a0', borderBottom: dashboardTab === tabKey ? '3px solid #00a884' : 'none' }}>
-                  {tabKey.replace('-',' ').toUpperCase()}
-                </div>
-              ))}
-            </div>
-
-            {/* Scrolling Roster Feed Pipeline Stack */}
-            <div style={styles.dashboardVerticalScrollableContactFeedContainerStack}>
-              {dashboardTab === 'chats-directory' && Object.values(chatDatabase).map(contactObj => {
-                const logsArray = contactObj.messages;
-                const topTerminalMessageNode = logsArray[logsArray.length - 1];
-                return (
-                  <div key={contactObj.id} onClick={() => setSelectedContactId(contactObj.id)} style={{ ...styles.rosterCardItemFlexlineContainerBox, background: selectedContactId === contactObj.id ? (globalChatCustomizer.uiMode === 'dark' ? '#2a3942' : '#f0f2f5') : 'transparent' }}>
-                    <img src={contactObj.avatar} alt={contactObj.name} style={styles.rosterContactAvatarElementNodeSquareCircularImg} />
-                    <div style={{ flex: 1, overflow: 'hidden' }}>
-                      <div style={styles.rosterContactMetaHeaderFlexlineRow}>
-                        <span style={{ fontWeight: '600', color: globalChatCustomizer.uiMode === 'dark' ? '#ffffff' : '#000000' }}>{contactObj.name}</span>
-                        <span style={{ fontSize: '11px', color: '#8696a0' }}>{topTerminalMessageNode ? topTerminalMessageNode.time : ''}</span>
-                      </div>
-                      <p style={styles.rosterContactMessagePreviewSubtextBlockParagraph}>{topTerminalMessageNode ? topTerminalMessageNode.text : 'Secure data stream pipeline idle.'}</p>
-                    </div>
-                  </div>
-                );
-              })}
-
-              {dashboardTab === 'status-feed' && (
-                <div style={{ padding: '12px' }}>
-                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#8696a0', display: 'block', marginBottom: '12px' }}>RECENT INSTANT BROADCAST STORIES</span>
-                  {SEED_STORIES.map(story => (
-                    <div key={story.id} style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '14px', cursor: 'pointer' }}>
-                      <img src={story.avatar} alt="" style={{ width: '44px', height: '44px', borderRadius: '50%', objectFit: 'cover', border: story.viewed ? '2px solid #8696a0' : '2px solid #00a884', padding: '1.5px' }} />
-                      <div>
-                        <div style={{ fontSize: '14.5px', fontWeight: '600' }}>{story.name}</div>
-                        <div style={{ fontSize: '12px', color: '#8696a0' }}>{story.time}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {dashboardTab === 'call-logs' && (
-                <div style={{ padding: '12px' }}>
-                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#8696a0', display: 'block', marginBottom: '12px' }}>TELECOM CHANNEL REVERB PIPELINE LOGS</span>
-                  {SEED_CALLS.map(call => (
-                    <div key={call.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                        <img src={call.avatar} alt="" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
-                        <div>
-                          <div style={{ fontSize: '14.5px', fontWeight: '600', color: call.missed ? '#ea0038' : 'inherit' }}>{call.name}</div>
-                          <div style={{ fontSize: '12px', color: '#8696a0' }}>{call.incoming ? '⬇ Incoming' : '⬆ Outbound'} • {call.time}</div>
-                        </div>
-                      </div>
-                      <span style={{ fontSize: '18px' }}>{call.type === 'video' ? '📹' : '📞'}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <button onClick={() => { setScreen('login'); setChatMessages([chatMessages[0]]); }} style={styles.logoutBtn}>Disconnect ✕</button>
           </div>
 
-          {/* ACTIVE WORKSPACE CHANNEL CORE CANVAS - RIGHT SECTION */}
-          <div style={{ ...styles.dashboardActiveWorkspaceChatCanvasPane, background: globalChatCustomizer.uiMode === 'dark' ? '#0b141a' : '#efeae2' }}>
-            {selectedChatContext ? (
-              <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+          {/* Chat Canvas Area */}
+          <div style={styles.chatCanvas}>
+            {chatMessages.map(msg => (
+              <div key={msg.id} style={{ ...styles.msgBubble, alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start', backgroundColor: msg.sender === 'user' ? '#005c4b' : '#202c33' }}>
+                <span style={{ fontSize: '11px', fontWeight: 'bold', marginBottom: '6px', color: msg.sender === 'user' ? '#00a884' : '#34b7f1', display: 'block' }}>
+                  {msg.sender === 'user' ? 'You' : 'Nexus-AI (Assistant)'}
+                </span>
                 
-                {/* Workspace Header Panel */}
-                <div style={{ ...styles.workspaceHeaderNavbarControlStripRow, background: globalChatCustomizer.uiMode === 'dark' ? '#202c33' : '#f0f2f5' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                    <img src={selectedChatContext.avatar} alt={selectedChatContext.name} style={styles.rosterContactAvatarElementNodeSquareCircularImg} />
-                    <div>
-                      <div style={{ fontWeight: '600', color: globalChatCustomizer.uiMode === 'dark' ? '#ffffff' : '#000000', fontSize: '15px' }}>{selectedChatContext.name}</div>
-                      <div style={{ fontSize: '12px', color: selectedChatContext.status === 'online' ? '#25d366' : '#8696a0' }}>
-                        {selectedChatContext.status === 'online' ? 'Secure Peer Online Connection Active' : 'Offline Mode Storage Relay'}
-                      </div>
-                    </div>
-                  </div>
-                  <div style={{ display: 'flex', gap: '22px', color: '#aebac1', fontSize: '18px', cursor: 'pointer' }}>
-                    <span onClick={() => alert(`Initializing end-to-end encrypted voice link to ${selectedChatContext.phone}`)}>📞</span>
-                    <span onClick={() => alert(`Opening peer WebRTC streaming video pipeline layer...`)}>📹</span>
-                  </div>
-                </div>
-
-                {/* Message Runway Scrollable View Area */}
-                <div style={styles.workspaceMessagesScrollableCanvasFieldArea}>
-                  {selectedChatContext.messages.map(messageNode => (
-                    <div key={messageNode.id} style={{ ...styles.messageBubbleFrameStructureBox, alignSelf: messageNode.type === 'outbound' ? 'flex-end' : 'flex-start', backgroundColor: messageNode.type === 'outbound' ? '#005c4b' : '#202c33' }}>
-                      {messageNode.media && messageNode.media.assetClass === 'image' && (
-                        <img src={messageNode.media.sourceUrl} alt="Transmitted Core Frame Pipeline Media" style={styles.bubbleEmbeddedAssetMediaImageGraphicPreview} onClick={() => { setMediaPreviewContext(messageNode.media.sourceUrl); setAppScreen('full-screen-media'); }} />
-                      )}
-                      {messageNode.media && messageNode.media.assetClass === 'video' && (
-                        <video src={messageNode.media.sourceUrl} controls style={styles.bubbleEmbeddedAssetMediaImageGraphicPreview} />
-                      )}
-                      <div style={{ fontSize: globalChatCustomizer.typographyWeight, wordBreak: 'break-word' }}>{messageNode.text}</div>
-                      <div style={styles.bubbleTimestampLayoutLineLabelMetaStringField}>{messageNode.time}</div>
-                    </div>
-                  ))}
-                  
-                  {isPeerTyping && (
-                    <div style={{ ...styles.messageBubbleFrameStructureBox, alignSelf: 'flex-start', backgroundColor: '#202c33', color: '#00a884', fontWeight: '600', animation: 'pulse 1s infinite' }}>
-                      AI System Engine processing response parameters...
-                    </div>
-                  )}
-                  <div ref={messageLayoutScrollerAnchor} />
-                </div>
-
-                {/* Media Attachment Core Frame Sync Ingestion Preview Bar Selector */}
-                {stagedMediaPacket && (
-                  <div style={styles.mediaStagedUploadStatusIndicatorPanelStripBar}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <span style={{ fontSize: '18px' }}>📂</span>
-                      <span style={{ fontSize: '13px' }}>Simulated Data Pipeline Payload Block ready: [Type: {stagedMediaPacket.assetClass.toUpperCase()}]</span>
-                    </div>
-                    <button onClick={() => setStagedMediaPacket(null)} style={{ background: 'none', border: 'none', color: '#ea0038', cursor: 'pointer', fontWeight: '600' }}>Flush Buffer</button>
-                  </div>
-                )}
-
-                {/* Input Ingestion Controller Terminal Footer Dock */}
-                <div style={{ ...styles.workspaceInputFormFooterDockPanelBarRow, background: globalChatCustomizer.uiMode === 'dark' ? '#202c33' : '#f0f2f5' }}>
-                  <div style={{ display: 'flex', gap: '16px', fontSize: '20px', cursor: 'pointer' }}>
-                    <span onClick={() => handleSimulatedMediaIngestion('image')} title="Ingest High-Res Photo Module Node">🖼️</span>
-                    <span onClick={() => handleSimulatedMediaIngestion('video')} title="Ingest Video Stream Asset Pointer">🎥</span>
-                  </div>
-                  
-                  <input type="text" placeholder="Type a secure message..." value={textInputField} onChange={e => setTextInputField(e.target.value)} onKeyPress={e => { if(e.key === 'Enter') dispatchMessagePacketPayload(); }} style={{ ...styles.workspaceMainInputTextFieldUnitControlBox, background: globalChatCustomizer.uiMode === 'dark' ? '#2a3942' : '#ffffff', color: globalChatCustomizer.uiMode === 'dark' ? '#ffffff' : '#000000' }} />
-                  
-                  <button onClick={dispatchMessagePacketPayload} style={styles.workspaceMessagePayloadSubmitActionTriggerBtn}>➔</button>
-                </div>
-
+                {/* Image rendering inside bubble if sent */}
+                {msg.image && <img src={msg.image} alt="uploaded content" style={styles.previewImageInBubble} />}
+                
+                <div style={{ fontSize: '14.5px', lineHeight: '1.5', color: '#ffffff' }}>{msg.text}</div>
+                <div style={styles.msgTime}>{msg.time}</div>
               </div>
-            ) : (
-              <div style={styles.workspaceEmptyPlaceholderOverlayCentralContainer}>
-                <div style={{ fontSize: '80px', marginBottom: '20px' }}>💬</div>
-                <h3>ConnectHub Messaging Core Ready</h3>
-                <p style={{ color: '#8696a0', fontSize: '14px', marginTop: '6px' }}>Select an active interface connection node endpoint from directory stack index frame matrix.</p>
+            ))}
+            {isAiTyping && (
+              <div style={{ ...styles.msgBubble, alignSelf: 'flex-start', backgroundColor: '#202c33', color: '#00a884' }}>
+                Nexus-AI is analyzing data...⏳
               </div>
             )}
+            <div ref={chatBottomRef} />
           </div>
 
-        </div>
-      )}
-
-      {/* ========================================================
-          CORE SCREEN 4: DETAILED MASTER SYSTEM CONFIGURATION CONTROLLER HUB
-          ======================================================== */}
-      {appScreen === 'settings-workspace' && (
-        <div style={styles.settingsOverlayPanelCanvasMasterContainerLayout}>
-          <div style={{ ...styles.settingsHeaderNavbarTopControlStripRow, background: globalChatCustomizer.uiMode === 'dark' ? '#202c33' : '#f0f2f5' }}>
-            <button onClick={() => setAppScreen('dashboard-view')} style={styles.settingsHeaderReturnActionDismissBtnLink}>⬅ Exit Control Configuration Hub</button>
-            <h2 style={{ fontSize: '18px', fontWeight: '700' }}>Central System Config Console</h2>
-          </div>
-
-          <div style={styles.settingsPanelBodyGridSplitterLayoutFrame}>
-            {/* Sidebar Navigation Selector Array */}
-            <div style={{ ...styles.settingsSidebarTabsVerticalStackRail, background: globalChatCustomizer.uiMode === 'dark' ? '#111b21' : '#ffffff', borderRight: globalChatCustomizer.uiMode === 'dark' ? '1px solid #222e35' : '1px solid #e9edef' }}>
-              <div onClick={() => setActiveSettingsPanel('profile-hub')} style={{ ...styles.settingsClickableTabNavigationCardRow, backgroundColor: activeSettingsPanel === 'profile-hub' ? '#2a3942' : 'transparent' }}>👤 Identity Node Profile</div>
-              <div onClick={() => setActiveSettingsPanel('privacy-hub')} style={{ ...styles.settingsClickableTabNavigationCardRow, backgroundColor: activeSettingsPanel === 'privacy-hub' ? '#2a3942' : 'transparent' }}>🔒 Cryptographic Privacy Guard</div>
-              <div onClick={() => setActiveSettingsPanel('chat-customizer-hub')} style={{ ...styles.settingsClickableTabNavigationCardRow, backgroundColor: activeSettingsPanel === 'chat-customizer-hub' ? '#2a3942' : 'transparent' }}>🎨 Core Themes & Canvas Matrix</div>
+          {/* Image Upload Preview Row */}
+          {selectedImage && (
+            <div style={styles.previewRow}>
+              <img src={selectedImage} alt="Attachment Preview" style={styles.uploadThumbnail} />
+              <button onClick={() => setSelectedImage(null)} style={styles.removeImgBtn}>Cancel Attachment ✕</button>
             </div>
+          )}
 
-            {/* Config Control Target Terminal Content Block View */}
-            <div style={styles.settingsActiveValueInspectorDisplayPanelFieldPane}>
-              {activeSettingsPanel === 'profile-hub' && (
-                <div style={styles.configurationOptionInspectorCardUnit}>
-                  <h3 style={{ borderBottom: '1px solid #222e35', paddingBottom: '10px', marginBottom: '20px' }}>Identity Core Parameters</h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
-                    <img src={userProfileIdentity.avatarUrl} alt="Large Profile Configuration Source View" style={styles.largeScaleAvatarProfileModifierGraphicCircleImg} />
-                    <input type="text" value={userProfileIdentity.fullName} onChange={e => setUserProfileIdentity({...userProfileIdentity, fullName: e.target.value})} style={styles.authNativeInputBoxControlElement} placeholder="Synchronize Display Roster Username String" />
-                    <input type="text" value={userProfileIdentity.customBioText} onChange={e => setUserProfileIdentity({...userProfileIdentity, customBioText: e.target.value})} style={styles.authNativeInputBoxControlElement} placeholder="Network Broadcast Custom Status Bio Packet" />
-                    
-                    <div style={{ width: '100%', fontSize: '13px', color: '#8696a0', display: 'flex', flexDirection: 'column', gap: '6px', background: '#111b21', padding: '14px', borderRadius: '8px' }}>
-                      <span>🔑 Hardcoded Infrastructure Endpoint Phone String: <b>{userProfileIdentity.registeredPhone}</b></span>
-                      <span>🛡️ Secure Validated Root Email System Context Anchor: <b>{userProfileIdentity.registeredEmail}</b></span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {activeSettingsPanel === 'privacy-hub' && (
-                <div style={styles.configurationOptionInspectorCardUnit}>
-                  <h3 style={{ borderBottom: '1px solid #222e35', paddingBottom: '10px', marginBottom: '20px' }}>Cryptographic Privacy Control Filters</h3>
-                  
-                  <div style={styles.configOptionLabelSelectorFlexlineRowItemRow}>
-                    <span>Last Seen Synchronization Interval Transmission Mask:</span>
-                    <select value={globalPrivacyPolicy.lastSeenOption} onChange={e => setGlobalPrivacyPolicy({...globalPrivacyPolicy, lastSeenOption: e.target.value})} style={styles.configSelectionDropdownInputSelectBoxControlUnit}>
-                      <option>Everyone</option>
-                      <option>My Contacts</option>
-                      <option>Nobody Protocol State</option>
-                    </select>
-                  </div>
-
-                  <div style={styles.configOptionLabelSelectorFlexlineRowItemRow}>
-                    <span>Identity Profile Asset Group Visibility Node:</span>
-                    <select value={globalPrivacyPolicy.profilePhotoOption} onChange={e => setGlobalPrivacyPolicy({...globalPrivacyPolicy, profilePhotoOption: e.target.value})} style={styles.configSelectionDropdownInputSelectBoxControlUnit}>
-                      <option>Everyone</option>
-                      <option>My Contacts</option>
-                      <option>Nobody Protocol State</option>
-                    </select>
-                  </div>
-                </div>
-              )}
-
-              {activeSettingsPanel === 'chat-customizer-hub' && (
-                <div style={styles.configurationOptionInspectorCardUnit}>
-                  <h3 style={{ borderBottom: '1px solid #222e35', paddingBottom: '10px', marginBottom: '20px' }}>Canvas Theme Rendering Customizers</h3>
-                  
-                  <div style={styles.configOptionLabelSelectorFlexlineRowItemRow}>
-                    <span>Application Frame Base Rendering Layout Mode:</span>
-                    <select value={globalChatCustomizer.uiMode} onChange={e => setGlobalChatCustomizer({...globalChatCustomizer, uiMode: e.target.value})} style={styles.configSelectionDropdownInputSelectBoxControlUnit}>
-                      <option value="dark">Dark Matrix Engine (डार्क मोड)</option>
-                      <option value="light">Light Luminescence Engine (लाइट मोड)</option>
-                    </select>
-                  </div>
-
-                  <div style={styles.configOptionLabelSelectorFlexlineRowItemRow}>
-                    <span>Canvas Typography Scaling Vector Weight:</span>
-                    <select value={globalChatCustomizer.typographyWeight} onChange={e => setGlobalChatCustomizer({...globalChatCustomizer, typographyWeight: e.target.value})} style={styles.configSelectionDropdownInputSelectBoxControlUnit}>
-                      <option value="13px">Compact Node Pack (13px)</option>
-                      <option value="14.5px">Standard Layout Target Array (14.5px)</option>
-                      <option value="17px">Expanded Font Scale Viewport Matrix (17px)</option>
-                    </select>
-                  </div>
-                </div>
-              )}
-            </div>
+          {/* Input Sending Console */}
+          <div style={styles.chatInputFooter}>
+            <label style={styles.imageUploadLabel}>
+              📁 Image
+              <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
+            </label>
+            <input type="text" placeholder="Ask Nexus-AI anything or upload a file context..." value={textInput} onChange={e => setTextInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSendMessage()} style={styles.mainInputField} />
+            <button onClick={handleSendMessage} style={styles.sendIconBtn}>Send</button>
           </div>
-        </div>
-      )}
-
-      {/* ========================================================
-          AUXILIARY SCREEN 5: IMMERSIVE FULL SCREEN MEDIA DISPLAY VIEWER DETECTOR
-          ======================================================== */}
-      {appScreen === 'full-screen-media' && (
-        <div style={styles.fullScreenImmersiveMediaViewerOverlayBackdropLayoutCanvas} onClick={() => setAppScreen('dashboard-view')}>
-          <div style={styles.fullScreenImmersiveDismissCloseTopActionHeaderBtn}>✕ Tap Screen Layer Canvas Frame to Collapse Vault Array Viewer</div>
-          <img src={mediaPreviewContext} alt="Immersive Media Context View Room" style={styles.fullScreenTargetImageRenderElementGraphicImg} />
         </div>
       )}
 
@@ -501,354 +306,196 @@ export default function UltimateWhatsAppEngine() {
 }
 
 // ========================================================
-// 4. ARCHITECTURAL LEVEL EXTENSIVE STYLING MANIFEST SCHEMATICS
+// 3. CLEAN DARK INDUSTRIAL DESIGN ARCHITECTURE
 // ========================================================
 const styles = {
-  appViewportContainerFrame: {
+  appWrapper: {
     width: '100vw',
     height: '100vh',
+    backgroundColor: '#0b141a',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'hidden',
+    fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
     margin: 0,
-    boxSizing: 'border-box'
+    overflow: 'hidden'
   },
-  authViewportModuleDeckCenterBox: {
+  authCard: {
     backgroundColor: '#111b21',
-    padding: '44px 36px',
-    borderRadius: '16px',
-    boxShadow: '0 12px 40px rgba(0,0,0,0.5)',
+    border: '1px solid #222e35',
+    padding: '40px',
+    borderRadius: '12px',
     width: '100%',
-    maxWidth: '430px',
+    maxWidth: '380px',
     textAlign: 'center',
+    boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
+  },
+  title: {
+    fontSize: '24px',
     color: '#ffffff',
-    border: '1px solid #222e35'
+    margin: '0 0 8px 0'
   },
-  brandLogoCircleGraphicWrapper: {
-    fontSize: '44px',
-    marginBottom: '16px',
-    display: 'inline-block'
-  },
-  authGlobalBrandHeaderTitle: {
-    fontSize: '22px',
-    fontWeight: '700',
-    marginBottom: '8px',
-    color: '#00a884',
-    letterSpacing: '0.2px'
-  },
-  authSubtextHelperStringParagraph: {
+  subtitle: {
+    fontSize: '13px',
     color: '#8696a0',
-    fontSize: '13.5px',
-    lineHeight: '1.5',
-    marginBottom: '26px',
-    padding: '0 10px'
+    margin: '0 0 24px 0'
   },
-  authFormVerticalStackPanelBox: {
+  form: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '14px'
+    gap: '16px'
   },
-  authNativeInputBoxControlElement: {
-    padding: '14px 16px',
-    borderRadius: '10px',
+  input: {
+    padding: '14px',
+    borderRadius: '8px',
     border: '1px solid #2a3942',
     backgroundColor: '#2a3942',
     color: '#ffffff',
-    fontSize: '14.5px',
+    fontSize: '15px',
     outline: 'none',
-    width: '100%',
-    boxSizing: 'border-box'
+    boxSizing: 'border-box',
+    width: '100%'
   },
-  authPrimaryActionSubmitBtnElement: {
+  btn: {
     backgroundColor: '#00a884',
     color: '#ffffff',
     border: 'none',
     padding: '14px',
-    borderRadius: '10px',
-    fontWeight: '700',
-    cursor: 'pointer',
+    borderRadius: '8px',
+    fontWeight: 'bold',
     fontSize: '15px',
-    marginTop: '8px',
-    boxShadow: '0 4px 12px rgba(0,168,132,0.3)',
+    cursor: 'pointer',
     transition: 'background 0.2s'
   },
-  authSecondaryAlternativeActionLinkBtn: {
-    background: 'none',
-    color: '#8696a0',
-    border: 'none',
-    cursor: 'pointer',
+  toggleText: {
     fontSize: '13px',
-    textDecoration: 'underline',
-    marginTop: '10px'
+    color: '#8696a0',
+    marginTop: '20px'
   },
-  mainDashboardTwoColumnLayoutSplitViewport: {
-    display: 'grid',
-    gridTemplateColumns: '380px 1fr',
+  link: {
+    color: '#00a884',
+    cursor: 'pointer',
+    textDecoration: 'underline'
+  },
+  chatContainer: {
     width: '100%',
-    height: '100%'
-  },
-  dashboardDirectorySidebarLeftRailPane: {
+    maxWidth: '900px',
+    height: '90vh',
+    backgroundColor: '#111b21',
+    border: '1px solid #222e35',
+    borderRadius: '12px',
     display: 'flex',
     flexDirection: 'column',
-    height: '100%'
+    overflow: 'hidden'
   },
-  dashboardLeftPanelHeaderToolbarRow: {
-    height: '60px',
-    padding: '10px 16px',
+  chatHeader: {
+    height: '70px',
+    backgroundColor: '#202c33',
+    padding: '0 20px',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    boxSizing: 'border-box'
+    borderBottom: '1px solid rgba(0,0,0,0.2)'
   },
-  userProfileIdentityAvatarCircularThumbnailImgNode: {
-    width: '40px',
-    height: '40px',
-    borderRadius: '50%',
+  statusDot: {
+    width: '12px',
+    height: '12px',
+    backgroundColor: '#00a884',
+    borderRadius: '50%'
+  },
+  logoutBtn: {
+    background: 'none',
+    border: '1px solid #ea0038',
+    color: '#ea0038',
+    padding: '6px 14px',
+    borderRadius: '4px',
     cursor: 'pointer',
-    objectFit: 'cover',
-    border: '2px solid #00a884'
+    fontSize: '13px'
   },
-  dashboardCategoryNavigationTabStripRowBar: {
-    display: 'flex',
-    height: '48px',
-    borderBottom: '1px solid #222e35'
-  },
-  dashboardTabHeaderClickableActionNode: {
-    flex: 1,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer',
-    fontWeight: '700',
-    fontSize: '12px',
-    letterSpacing: '0.6px'
-  },
-  dashboardVerticalScrollableContactFeedContainerStack: {
-    flex: 1,
-    overflowY: 'auto'
-  },
-  rosterCardItemFlexlineContainerBox: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '14px 16px',
-    gap: '14px',
-    cursor: 'pointer',
-    borderBottom: '1px solid #222e35',
-    transition: 'background-color 0.15s'
-  },
-  rosterContactAvatarElementNodeSquareCircularImg: {
-    width: '46px',
-    height: '46px',
-    borderRadius: '50%',
-    objectFit: 'cover'
-  },
-  rosterContactMetaHeaderFlexlineRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginBottom: '4px'
-  },
-  rosterContactMessagePreviewSubtextBlockParagraph: {
-    margin: 0,
-    fontSize: '13px',
-    color: '#8696a0',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis'
-  },
-  dashboardActiveWorkspaceChatCanvasPane: {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    position: 'relative'
-  },
-  workspaceEmptyPlaceholderOverlayCentralContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100%',
-    color: '#8696a0',
-    textAlign: 'center'
-  },
-  workspaceHeaderNavbarControlStripRow: {
-    height: '60px',
-    padding: '10px 20px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    boxSizing: 'border-box',
-    borderBottom: '1px solid rgba(0,0,0,0.15)',
-    zIndex: 10
-  },
-  workspaceMessagesScrollableCanvasFieldArea: {
+  chatCanvas: {
     flex: 1,
     overflowY: 'auto',
-    padding: '24px 40px',
+    padding: '20px',
     display: 'flex',
     flexDirection: 'column',
-    gap: '10px'
+    gap: '14px',
+    backgroundColor: '#0b141a'
   },
-  messageBubbleFrameStructureBox: {
+  msgBubble: {
     maxWidth: '65%',
-    padding: '10px 14px',
-    borderRadius: '10px',
-    boxShadow: '0 1px 1.5px rgba(0,0,0,0.3)',
-    color: '#ffffff',
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  bubbleTimestampLayoutLineLabelMetaStringField: {
-    fontSize: '9.5px',
-    color: 'rgba(255,255,255,0.5)',
-    textAlign: 'right',
-    marginTop: '5px'
-  },
-  bubbleEmbeddedAssetMediaImageGraphicPreview: {
-    width: '100%',
-    maxHeight: '220px',
+    padding: '12px 16px',
     borderRadius: '8px',
-    marginBottom: '6px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+  },
+  previewImageInBubble: {
+    maxWidth: '100%',
+    maxHeight: '200px',
+    borderRadius: '6px',
+    marginBottom: '8px',
+    display: 'block'
+  },
+  msgTime: {
+    fontSize: '10px',
+    color: 'rgba(255,255,255,0.4)',
+    textAlign: 'right',
+    marginTop: '6px'
+  },
+  previewRow: {
+    padding: '10px 20px',
+    backgroundColor: '#1f2c34',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '15px',
+    borderTop: '1px solid #2a3942'
+  },
+  uploadThumbnail: {
+    width: '50px',
+    height: '50px',
     objectFit: 'cover',
-    cursor: 'pointer'
+    borderRadius: '4px',
+    border: '1px solid #00a884'
   },
-  mediaStagedUploadStatusIndicatorPanelStripBar: {
-    padding: '12px 24px',
-    backgroundColor: '#111b21',
-    borderTop: '1px solid #222e35',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    color: '#00a884'
-  },
-  workspaceInputFormFooterDockPanelBarRow: {
-    padding: '12px 24px',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '18px',
-    boxSizing: 'border-box'
-  },
-  workspaceMainInputTextFieldUnitControlBox: {
-    flex: 1,
-    padding: '12px 18px',
-    borderRadius: '10px',
-    border: 'none',
-    outline: 'none',
-    fontSize: '14.5px'
-  },
-  workspaceMessagePayloadSubmitActionTriggerBtn: {
-    background: 'none',
-    border: 'none',
-    color: '#00a884',
-    fontSize: '24px',
-    cursor: 'pointer'
-  },
-  settingsOverlayPanelCanvasMasterContainerLayout: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#0b141a',
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  settingsHeaderNavbarTopControlStripRow: {
-    height: '60px',
-    display: 'flex',
-    alignItems: 'center',
-    padding: '0 24px',
-    gap: '40px',
-    color: '#ffffff',
-    borderBottom: '1px solid #222e35'
-  },
-  settingsHeaderReturnActionDismissBtnLink: {
+  removeImgBtn: {
     backgroundColor: 'transparent',
     border: 'none',
-    color: '#00a884',
-    fontSize: '14.5px',
+    color: '#ea0038',
     cursor: 'pointer',
-    fontWeight: '700'
+    fontSize: '13px'
   },
-  settingsPanelBodyGridSplitterLayoutFrame: {
-    display: 'grid',
-    gridTemplateColumns: '300px 1fr',
-    flex: 1
-  },
-  settingsSidebarTabsVerticalStackRail: {
-    padding: '24px 12px',
+  chatInputFooter: {
+    padding: '16px 20px',
+    backgroundColor: '#202c33',
     display: 'flex',
-    flexDirection: 'column',
-    gap: '8px'
-  },
-  settingsClickableTabNavigationCardRow: {
-    padding: '14px 18px',
-    borderRadius: '10px',
-    color: '#ffffff',
-    cursor: 'pointer',
-    fontWeight: '600',
-    fontSize: '14px',
-    transition: 'background-color 0.2s'
-  },
-  settingsActiveValueInspectorDisplayPanelFieldPane: {
-    padding: '40px 60px'
-  },
-  configurationOptionInspectorCardUnit: {
-    maxWidth: '550px'
-  },
-  largeScaleAvatarProfileModifierGraphicCircleImg: {
-    width: '130px',
-    height: '130px',
-    borderRadius: '50%',
-    objectFit: 'cover',
-    border: '3px solid #00a884',
-    boxShadow: '0 0 16px rgba(0,168,132,0.4)'
-  },
-  configOptionLabelSelectorFlexlineRowItemRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '24px',
-    fontSize: '14.5px'
+    gap: '12px'
   },
-  configSelectionDropdownInputSelectBoxControlUnit: {
+  imageUploadLabel: {
     backgroundColor: '#2a3942',
     color: '#ffffff',
-    border: '1px solid #222e35',
-    padding: '10px 14px',
+    padding: '12px 16px',
     borderRadius: '8px',
-    outline: 'none',
-    cursor: 'pointer'
-  },
-  fullScreenImmersiveMediaViewerOverlayBackdropLayoutCanvas: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100vw',
-    height: '100vh',
-    backgroundColor: 'rgba(0,0,0,0.95)',
-    zIndex: 99999,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '40px',
-    boxSizing: 'border-box'
-  },
-  fullScreenImmersiveDismissCloseTopActionHeaderBtn: {
-    position: 'absolute',
-    top: '30px',
-    color: '#8696a0',
-    fontSize: '14px',
-    letterSpacing: '0.4px',
     cursor: 'pointer',
-    background: 'rgba(255,255,255,0.05)',
-    padding: '8px 16px',
-    borderRadius: '20px'
+    fontSize: '14px',
+    fontWeight: '600'
   },
-  fullScreenTargetImageRenderElementGraphicImg: {
-    maxWidth: '90%',
-    maxHeight: '80%',
-    objectFit: 'contain',
+  mainInputField: {
+    flex: 1,
+    padding: '12px 16px',
     borderRadius: '8px',
-    boxShadow: '0 8px 30px rgba(0,0,0,0.5)'
+    border: 'none',
+    backgroundColor: '#2a3942',
+    color: '#ffffff',
+    outline: 'none',
+    fontSize: '15px'
+  },
+  sendIconBtn: {
+    backgroundColor: '#00a884',
+    color: '#ffffff',
+    border: 'none',
+    padding: '12px 20px',
+    borderRadius: '8px',
+    fontWeight: 'bold',
+    cursor: 'pointer'
   }
 };
-    
+                   
