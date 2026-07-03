@@ -1,573 +1,853 @@
-import React, { useState } from 'react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WhatsApp Pro-Max Web Ecosystem</title>
+    <!-- FontAwesome for Premium Native Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --wa-teal: #008069;
+            --wa-teal-dark: #075e54;
+            --wa-light-green: #25d366;
+            --wa-blue: #34b7f1;
+            --bg-app: #f0f2f5;
+            --bg-chat: #efeae2;
+            --surface: #ffffff;
+            --text-main: #111b21;
+            --text-muted: #667781;
+            --bubble-in: #ffffff;
+            --bubble-out: #d9fdd3;
+            --border: #e9edef;
+        }
 
-export default function App() {
-  const [currentScreen, setCurrentScreen] = useState('chat'); // 'messages', 'chat', 'profile'
-  const [typedMessage, setTypedMessage] = useState('');
-  const [messages, setMessages] = useState([
-    { id: 1, text: "Hey there! 👋", time: "02:10 PM", isSender: false },
-    { id: 2, text: "Hi Emily! How are going?", time: "02:11 PM", isSender: true },
-    { id: 3, text: "I'm good, thanks! You?", time: "02:11 PM", isSender: false },
-    { id: 4, text: "Doing great! What's up?", time: "02:12 PM", isSender: true },
-    { id: 5, type: "voice", duration: "00:12", time: "02:12 PM", isSender: false },
-    { id: 6, text: "That's awesome! 😉", time: "02:13 PM", isSender: true },
-    { id: 7, type: "call", text: "Audio Call", duration: "2m 45s", time: "02:15 PM", isSender: false }
-  ]);
+        /* Dark Mode Properties */
+        body.dark-mode {
+            --wa-teal: #202c33;
+            --wa-teal-dark: #111b21;
+            --bg-app: #0b141a;
+            --bg-chat: #0b141a;
+            --surface: #111b21;
+            --text-main: #e9edef;
+            --text-muted: #8696a0;
+            --bubble-in: #202c33;
+            --bubble-out: #005c4b;
+            --border: #222e35;
+        }
 
-  const handleSendMessage = () => {
-    if (!typedMessage.trim()) return;
-    const newMsg = {
-      id: Date.now(),
-      text: typedMessage,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      isSender: true
-    };
-    setMessages([...messages, newMsg]);
-    setTypedMessage('');
-  };
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-  return (
-    <div style={styles.appWrapper}>
-      {/* 1. MESSAGES LIST SCREEN */}
-      {currentScreen === 'messages' && (
-        <div style={styles.screenContainer}>
-          <div style={styles.header}>
-            <button style={styles.iconButton}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-            </button>
-            <h2 style={styles.headerTitle}>Messages</h2>
-            <div style={{ width: 24 }}></div>
-          </div>
+        body {
+            background-color: #f0f2f5;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
 
-          <div style={styles.searchBarWrapper}>
-            <div style={styles.searchBar}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#65676b" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-              <input type="text" placeholder="Search messages or users" style={styles.searchInput} />
+        .phone-frame {
+            width: 100%;
+            max-width: 460px;
+            height: 100vh;
+            background: var(--surface);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.2);
+        }
+
+        /* Top Bar Component */
+        .main-header {
+            background: var(--wa-teal);
+            color: white;
+            padding: 16px 16px 4px 16px;
+            z-index: 10;
+        }
+
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .brand-title {
+            font-size: 21px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 22px;
+            font-size: 19px;
+            cursor: pointer;
+        }
+
+        /* Navigation Tab Bar */
+        .tab-bar {
+            display: flex;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .tab-item {
+            flex: 1;
+            padding: 12px 0;
+            cursor: pointer;
+            opacity: 0.7;
+            text-transform: uppercase;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab-item.active {
+            opacity: 1;
+            border-bottom: 3px solid #ffffff;
+        }
+
+        /* Search Infrastructure */
+        .search-wrapper {
+            padding: 8px 12px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search-bar {
+            background: var(--bg-app);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            padding: 6px 14px;
+            gap: 14px;
+        }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: 15px;
+            color: var(--text-main);
+        }
+
+        /* Viewport Container for Switching Screens */
+        .viewport-scroller {
+            flex: 1;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .app-view {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .app-view.active {
+            display: block;
+        }
+
+        /* Chat Roster Layout */
+        .list-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .list-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .list-row:active {
+            background: var(--bg-app);
+        }
+
+        .avatar-box {
+            position: relative;
+            margin-right: 14px;
+        }
+
+        .item-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #ccc;
+        }
+
+        .online-dot {
+            width: 13px;
+            height: 13px;
+            background: var(--wa-light-green);
+            border: 2px solid var(--surface);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 3px;
+            right: 1px;
+        }
+
+        .item-details {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .row-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 16px;
+        }
+
+        .item-time {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .row-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-preview {
+            font-size: 14px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .badge-counter {
+            background: var(--wa-light-green);
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 50%;
+            min-width: 19px;
+            text-align: center;
+        }
+
+        /* IMMERSIVE CHAT ROOM (SLIDE ANIMATION) */
+        .chat-room-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--surface);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.25s cubic-bezier(0.1, 0.8, 0.1, 1);
+        }
+
+        .chat-room-screen.open {
+            transform: translateX(0);
+        }
+
+        .room-header {
+            background: var(--wa-teal);
+            color: white;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .room-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .messages-canvas {
+            flex: 1;
+            background: var(--bg-chat);
+            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+            background-blend-mode: overlay;
+            overflow-y: auto;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .bubble {
+            max-width: 80%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 15px;
+            position: relative;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.12);
+            word-wrap: break-word;
+        }
+
+        .bubble.inbound {
+            background: var(--bubble-in);
+            color: var(--text-main);
+            align-self: flex-start;
+            border-top-left-radius: 0;
+        }
+
+        .bubble.outbound {
+            background: var(--bubble-out);
+            color: #111b21;
+            align-self: flex-end;
+            border-top-right-radius: 0;
+        }
+
+        .timestamp-box {
+            float: right;
+            margin: 4px 0 -4px 8px;
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .timestamp-box i {
+            color: #53bdeb;
+        }
+
+        /* Input Deck Configuration */
+        .input-dock {
+            background: var(--bg-app);
+            padding: 8px 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-dock i {
+            font-size: 22px;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .message-input {
+            flex: 1;
+            background: var(--surface);
+            border: none;
+            outline: none;
+            padding: 10px 16px;
+            border-radius: 22px;
+            font-size: 15px;
+            color: var(--text-main);
+        }
+
+        .dock-action-btn {
+            background: var(--wa-teal);
+            color: white;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* SETTINGS & SYSTEMS MODULE */
+        .settings-header {
+            padding: 20px;
+            background: var(--bg-app);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .setting-node {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            gap: 20px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-main);
+        }
+
+        .setting-node i {
+            font-size: 20px;
+            color: var(--wa-teal);
+            width: 24px;
+            text-align: center;
+        }
+
+        .setting-info h4 {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .setting-info p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* IMMERSIVE CALL MODAL overlay */
+        .call-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #111b21;
+            color: white;
+            z-index: 500;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 60px 24px;
+        }
+
+        .call-buttons {
+            display: flex;
+            gap: 30px;
+        }
+
+        .c-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            border: none;
+            cursor: pointer;
+            background: rgba(255,255,255,0.15);
+            color: white;
+        }
+
+        .c-btn.hangup {
+            background: #ea0038;
+        }
+
+        /* BOTTOM POPUP/DRAWER SYSTEM */
+        .drawer-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 300;
+            display: none;
+            align-items: flex-end;
+        }
+
+        .drawer-sheet {
+            background: var(--surface);
+            width: 100%;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            padding: 24px 16px;
+        }
+
+        .drawer-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            text-align: center;
+        }
+
+        .drawer-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-main);
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .drawer-item .icon-circle {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--bg-app);
+            color: var(--wa-teal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="phone-frame">
+    <!-- NATIVE MAIN MASTER HEADER -->
+    <header class="main-header" id="masterHeader">
+        <div class="top-row">
+            <span class="brand-title">WhatsApp Hub</span>
+            <div class="header-icons">
+                <i class="fas fa-camera" onclick="triggerNativeFeedback('Camera opened')"></i>
+                <i class="fas fa-search" onclick="triggerNativeFeedback('Search active')"></i>
+                <i class="fas fa-ellipsis-vertical" onclick="openGlobalDrawer('Menu Matrix')"></i>
             </div>
-            <button style={styles.filterButton}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#65676b" strokeWidth="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
-            </button>
-          </div>
-
-          <div style={styles.chatList}>
-            <div style={{ ...styles.chatItem, backgroundColor: '#f0eeff' }} onClick={() => setCurrentScreen('chat')}>
-              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150" alt="Emily" style={styles.avatar} />
-              <div style={styles.chatMeta}>
-                <div style={styles.chatRow}>
-                  <span style={styles.chatName}>Emily Johnson</span>
-                  <span style={{ ...styles.chatTime, color: '#6a4bfa' }}>2m</span>
-                </div>
-                <div style={styles.chatRow}>
-                  <span style={{ ...styles.chatPreview, color: '#24b07a', fontWeight: '500' }}>Typing...</span>
-                  <span style={styles.badge}>2</span>
-                </div>
-              </div>
-            </div>
-
-            {[
-              { name: "Liam Davis", text: "Hey! How are you?", time: "10m", unread: 1, img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150" },
-              { name: "Sophia Martinez", text: "🎙️ Voice message", time: "25m", unread: 0, img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150" },
-              { name: "Noah Wilson", text: "Let's catch up later.", time: "1h", unread: 0, img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150" },
-              { name: "Olivia Taylor", text: "📞 Missed call", time: "1h", unread: 0, img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150" }
-            ].map((c, idx) => (
-              <div key={idx} style={styles.chatItem} onClick={() => setCurrentScreen('chat')}>
-                <img src={c.img} alt={c.name} style={styles.avatar} />
-                <div style={styles.chatMeta}>
-                  <div style={styles.chatRow}>
-                    <span style={styles.chatName}>{c.name}</span>
-                    <span style={styles.chatTime}>{c.time}</span>
-                  </div>
-                  <div style={styles.chatRow}>
-                    <span style={styles.chatPreview}>{c.text}</span>
-                    {c.unread > 0 && <span style={styles.badge}>{c.unread}</span>}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div style={styles.bottomTabBar}>
-            <div style={styles.tabItem} onClick={() => setCurrentScreen('messages')}><span style={{ opacity: 0.5 }}>🏠</span><span style={styles.tabLabel}>Home</span></div>
-            <div style={{ ...styles.tabItem, color: '#6a4bfa' }}><span style={{ fontSize: 20 }}>💬</span><span style={{ ...styles.tabLabel, fontWeight: '600' }}>Messages</span></div>
-            <div style={styles.tabItem}><span style={{ opacity: 0.5 }}>👥</span><span style={styles.tabLabel}>People</span></div>
-            <div style={styles.tabItem}><span style={{ opacity: 0.5 }}>⭐</span><span style={styles.tabLabel}>Favorites</span></div>
-          </div>
         </div>
-      )}
-
-      {/* 2. ACTIVE CHAT SCREEN */}
-      {currentScreen === 'chat' && (
-        <div style={styles.screenContainer}>
-          <div style={styles.header}>
-            <button style={styles.iconButton} onClick={() => setCurrentScreen('messages')}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-            </button>
-            <div style={styles.headerUserMeta} onClick={() => setCurrentScreen('profile')}>
-              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150" alt="Emily" style={styles.headerAvatar} />
-              <div>
-                <div style={styles.headerName}>Emily Johnson</div>
-                <div style={styles.headerStatus}>Online</div>
-              </div>
-            </div>
-            <div style={styles.headerActions}>
-              <button style={styles.iconButton}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-              </button>
-              <button style={styles.iconButton}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 7a2 2 0 0 0-2.45-1.45L16 7V5a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2l4.55 1.45A2 2 0 0 0 23 17V7z"></path></svg>
-              </button>
-            </div>
-          </div>
-
-          <div style={styles.chatFeed}>
-            {messages.map((msg) => (
-              <div key={msg.id} style={{
-                ...styles.messageRow,
-                justifyContent: msg.isSender ? 'flex-end' : 'flex-start'
-              }}>
-                <div style={{
-                  ...styles.bubble,
-                  backgroundColor: msg.isSender ? '#6a4bfa' : '#f1f3f4',
-                  color: msg.isSender ? '#ffffff' : '#0f1419',
-                  borderRadius: msg.isSender ? '16px 16px 4px 16px' : '16px 16px 16px 4px'
-                }}>
-                  {msg.type === 'voice' ? (
-                    <div style={styles.voiceWrapper}>
-                      <span style={{ fontSize: 18 }}>▶️</span>
-                      <div style={styles.waveForm}></div>
-                      <span style={styles.voiceDuration}>{msg.duration}</span>
-                    </div>
-                  ) : msg.type === 'call' ? (
-                    <div style={styles.callWrapper}>
-                      <span style={{ fontSize: 18 }}>📞</span>
-                      <div>
-                        <div style={{ fontWeight: '600', fontSize: 14 }}>{msg.text}</div>
-                        <div style={{ fontSize: 11, opacity: 0.7 }}>{msg.duration}</div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div>{msg.text}</div>
-                  )}
-                  <div style={{
-                    ...styles.bubbleTime,
-                    color: msg.isSender ? 'rgba(255,255,255,0.7)' : '#65676b',
-                    textAlign: msg.isSender ? 'right' : 'left'
-                  }}>{msg.time}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div style={styles.inputDock}>
-            <button style={styles.dockAddBtn}>+</button>
-            <input 
-              type="text" 
-              placeholder="Type a message..." 
-              value={typedMessage}
-              onChange={(e) => setTypedMessage(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-              style={styles.dockInput} 
-            />
-            <button style={styles.dockIconBtn}>😊</button>
-            <button style={styles.dockIconBtn} onClick={handleSendMessage}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6a4bfa" strokeWidth="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-            </button>
-          </div>
+        <!-- Live Tabs Navigation Bar -->
+        <div class="tab-bar">
+            <div class="tab-item active" onclick="switchActiveTab(this, 'chatsView')">Chats</div>
+            <div class="tab-item" onclick="switchActiveTab(this, 'statusView')">Status</div>
+            <div class="tab-item" onclick="switchActiveTab(this, 'callsView')">Calls</div>
+            <div class="tab-item" onclick="switchActiveTab(this, 'settingsView')">Settings</div>
         </div>
-      )}
+    </header>
 
-      {/* 3. USER PROFILE SCREEN */}
-      {currentScreen === 'profile' && (
-        <div style={styles.screenContainer}>
-          <div style={styles.header}>
-            <button style={styles.iconButton} onClick={() => setCurrentScreen('chat')}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-            </button>
-            <div style={{ width: 24 }}></div>
-          </div>
-
-          <div style={styles.profileHero}>
-            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300" alt="Emily" style={styles.largeAvatar} />
-            <h3 style={styles.profileName}>Emily Johnson</h3>
-            <span style={styles.profileStatus}>Online</span>
-          </div>
-
-          <div style={styles.profileActionsRow}>
-            <div style={styles.profileActionItem}><span>📞</span><label style={styles.profileActionLabel}>Voice Call</label></div>
-            <div style={styles.profileActionItem}><span>📹</span><label style={styles.profileActionLabel}>Video Call</label></div>
-            <div style={styles.profileActionItem}><span>🔔</span><label style={styles.profileActionLabel}>Mute</label></div>
-            <div style={styles.profileActionItem}><span>···</span><label style={styles.profileActionLabel}>More</label></div>
-          </div>
-
-          <div style={styles.settingsGroup}>
-            <div style={styles.settingsHeaderRow}>
-              <span style={{ fontWeight: '600' }}>Media, files and links</span>
-              <span style={{ color: '#65676b', fontSize: 13 }}>12 ❯</span>
-            </div>
-            <div style={styles.mediaGrid}>
-              <img src="https://images.unsplash.com/photo-1511556532299-8f662fc26c06?w=150" alt="media" style={styles.mediaThumb} />
-              <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=150" alt="media" style={styles.mediaThumb} />
-              <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=150" alt="media" style={styles.mediaThumb} />
-            </div>
-          </div>
-
-          <div style={{ ...styles.settingsGroup, padding: 0 }}>
-            <div style={styles.settingItemRow}>
-              <span>Block User</span>
-              <span style={{ color: '#ff3b30' }}>❌</span>
-            </div>
-            <div style={{ ...styles.settingItemRow, border: 'none' }}>
-              <span>Report User</span>
-              <span style={{ color: '#ff3b30' }}>🚩</span>
-            </div>
-          </div>
+    <!-- CORE SEARCH BAR CONTAINER -->
+    <div class="search-wrapper" id="masterSearchContainer">
+        <div class="search-bar">
+            <i class="fas fa-search" style="color: var(--text-muted);"></i>
+            <input type="text" id="masterSearchInput" placeholder="Search chats, logs or settings..." oninput="executeEngineSearch()">
         </div>
-      )}
     </div>
-  );
-}
 
-const styles = {
-  appWrapper: {
-    backgroundColor: '#000000',
-    minHeight: '100vh',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
-  },
-  screenContainer: {
-    width: '100%',
-    maxWidth: '425px',
-    height: '100vh',
-    backgroundColor: '#ffffff',
-    display: 'flex',
-    flexDirection: 'column',
-    position: 'relative',
-    overflow: 'hidden'
-  },
-  header: {
-    height: '64px',
-    padding: '0 16px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderBottom: '1px solid #f1f3f4',
-    backgroundColor: '#ffffff',
-    zIndex: 10
-  },
-  iconButton: {
-    background: 'none',
-    border: 'none',
-    padding: '8px',
-    cursor: 'pointer',
-    color: '#0f1419',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  headerTitle: {
-    fontSize: '20px',
-    fontWeight: '700',
-    color: '#0f1419',
-    margin: 0
-  },
-  searchBarWrapper: {
-    padding: '8px 16px',
-    display: 'flex',
-    gap: '12px'
-  },
-  searchBar: {
-    flex: 1,
-    backgroundColor: '#f1f3f4',
-    borderRadius: '20px',
-    padding: '0 14px',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px'
-  },
-  searchInput: {
-    width: '100%',
-    border: 'none',
-    background: 'none',
-    height: '36px',
-    outline: 'none',
-    fontSize: '14px'
-  },
-  filterButton: {
-    width: '36px',
-    height: '36px',
-    borderRadius: '50%',
-    backgroundColor: '#f1f3f4',
-    border: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer'
-  },
-  chatList: {
-    flex: 1,
-    overflowY: 'auto',
-    padding: '8px 0'
-  },
-  chatItem: {
-    display: 'flex',
-    padding: '12px 16px',
-    gap: '14px',
-    cursor: 'pointer',
-    alignItems: 'center',
-    transition: 'background-color 0.2s'
-  },
-  avatar: {
-    width: '48px',
-    height: '48px',
-    borderRadius: '50%',
-    objectFit: 'cover'
-  },
-  chatMeta: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '4px'
-  },
-  chatRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  chatName: {
-    fontWeight: '600',
-    fontSize: '15px',
-    color: '#0f1419'
-  },
-  chatTime: {
-    fontSize: '12px',
-    color: '#65676b'
-  },
-  chatPreview: {
-    fontSize: '13px',
-    color: '#65676b',
-    maxWidth: '200px',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis'
-  },
-  badge: {
-    backgroundColor: '#6a4bfa',
-    color: '#ffffff',
-    fontSize: '11px',
-    fontWeight: '600',
-    borderRadius: '10px',
-    padding: '2px 6px',
-    minWidth: '10px',
-    textAlign: 'center'
-  },
-  bottomTabBar: {
-    height: '60px',
-    borderTop: '1px solid #f1f3f4',
-    display: 'flex',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: '#ffffff'
-  },
-  tabItem: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '4px',
-    cursor: 'pointer',
-    color: '#65676b'
-  },
-  tabLabel: {
-    fontSize: '10px',
-    fontWeight: '500'
-  },
-  headerUserMeta: {
-    flex: 1,
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-    marginLeft: '8px',
-    cursor: 'pointer'
-  },
-  headerAvatar: {
-    width: '36px',
-    height: '36px',
-    borderRadius: '50%',
-    objectFit: 'cover'
-  },
-  headerName: {
-    fontWeight: '600',
-    fontSize: '15px'
-  },
-  headerStatus: {
-    fontSize: '11px',
-    color: '#24b07a',
-    fontWeight: '500'
-  },
-  headerActions: {
-    display: 'flex',
-    gap: '8px'
-  },
-  chatFeed: {
-    flex: 1,
-    overflowY: 'auto',
-    backgroundColor: '#ffffff',
-    padding: '16px',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '12px'
-  },
-  messageRow: {
-    display: 'flex',
-    width: '100%'
-  },
-  bubble: {
-    maxWidth: '75%',
-    padding: '10px 14px',
-    fontSize: '14px',
-    lineHeight: '1.4',
-    position: 'relative'
-  },
-  bubbleTime: {
-    fontSize: '10px',
-    marginTop: '4px',
-    opacity: 0.8
-  },
-  voiceWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    minWidth: '160px'
-  },
-  waveForm: {
-    flex: 1,
-    height: '2px',
-    backgroundColor: '#b5a7ff',
-    borderRadius: '1px'
-  },
-  voiceDuration: {
-    fontSize: '11px',
-    opacity: 0.9
-  },
-  callWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-    minWidth: '140px'
-  },
-  inputDock: {
-    padding: '12px 16px',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '12px',
-    borderTop: '1px solid #f1f3f4',
-    backgroundColor: '#ffffff'
-  },
-  dockAddBtn: {
-    width: '36px',
-    height: '36px',
-    borderRadius: '50%',
-    backgroundColor: '#6a4bfa',
-    color: '#ffffff',
-    border: 'none',
-    fontSize: '20px',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  dockInput: {
-    flex: 1,
-    height: '36px',
-    backgroundColor: '#f1f3f4',
-    border: 'none',
-    borderRadius: '18px',
-    padding: '0 14px',
-    outline: 'none',
-    fontSize: '14px'
-  },
-  dockIconBtn: {
-    background: 'none',
-    border: 'none',
-    fontSize: '20px',
-    cursor: 'pointer',
-    padding: '4px'
-  },
-  profileHero: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: '24px 16px',
-    borderBottom: '1px solid #f1f3f4'
-  },
-  largeAvatar: {
-    width: '96px',
-    height: '96px',
-    borderRadius: '50%',
-    objectFit: 'cover',
-    marginBottom: '12px'
-  },
-  profileName: {
-    fontSize: '20px',
-    fontWeight: '700',
-    margin: '0 0 4px 0',
-    color: '#0f1419'
-  },
-  profileStatus: {
-    fontSize: '13px',
-    color: '#24b07a',
-    fontWeight: '500'
-  },
-  profileActionsRow: {
-    display: 'flex',
-    justifyContent: 'space-around',
-    padding: '16px',
-    borderBottom: '1px solid #f1f3f4'
-  },
-  profileActionItem: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '6px',
-    cursor: 'pointer',
-    fontSize: '18px'
-  },
-  profileActionLabel: {
-    fontSize: '11px',
-    color: '#65676b',
-    fontWeight: '500'
-  },
-  settingsGroup: {
-    padding: '16px',
-    borderBottom: '8px solid #f1f3f4'
-  },
-  settingsHeaderRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '12px',
-    fontSize: '14px'
-  },
-  mediaGrid: {
-    display: 'flex',
-    gap: '8px',
-    overflowX: 'auto'
-  },
-  mediaThumb: {
-    width: '76px',
-    height: '76px',
-    borderRadius: '8px',
-    objectFit: 'cover'
-  },
-  settingItemRow: {
-    padding: '16px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderBottom: '1px solid #f1f3f4',
-    fontSize: '14px',
-    fontWeight: '500',
-    cursor: 'pointer'
-  }
-};
-    
+    <!-- MAIN VIEWPORT ROUTER MATRIX -->
+    <div class="viewport-scroller">
+        
+        <!-- 1. CHATS TAB VIEW -->
+        <div id="chatsView" class="app-view active">
+            <div class="list-container" id="chatsInjectedContainer"></div>
+        </div>
+
+        <!-- 2. STATUS TAB VIEW -->
+        <div id="statusView" class="app-view">
+            <div class="list-container">
+                <div class="list-row" onclick="triggerNativeFeedback('My status update triggered')">
+                    <div class="avatar-box">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" class="item-avatar" style="border: 2px dashed var(--wa-light-green); padding: 2px;">
+                    </div>
+                    <div class="item-details">
+                        <div class="item-name">My Status</div>
+                        <div class="item-preview">Tap to add status update</div>
+                    </div>
+                </div>
+                <div style="padding: 10px 16px; font-size: 13px; font-weight: 700; color: var(--text-muted); background: var(--bg-app);">Recent Updates</div>
+                <div class="list-row" onclick="triggerNativeFeedback('Viewing Emily Status')">
+                    <div class="avatar-box"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150" class="item-avatar" style="border: 2px solid var(--wa-light-green); padding: 2px;"></div>
+                    <div class="item-details"><div class="item-name">Emily Johnson</div><div class="item-preview">Just now</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. CALLS TAB VIEW -->
+        <div id="callsView" class="app-view">
+            <div class="list-container">
+                <div class="list-row">
+                    <div class="avatar-box"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150" class="item-avatar"></div>
+                    <div class="item-details">
+                        <div class="item-name">Liam Davis</div>
+                        <div class="item-preview"><i class="fas fa-arrow-down-left" style="color: #ea0038; margin-right: 5px;"></i>Missed Voice Call</div>
+                    </div>
+                    <i class="fas fa-phone" style="color: var(--wa-teal); font-size: 18px;" onclick="triggerImmersiveCall('Liam Davis', 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150')"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. ADVANCED SETTINGS TAB VIEW -->
+        <div id="settingsView" class="app-view">
+            <div class="settings-header">
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150" class="item-avatar" style="width:60px; height:60px;">
+                <div>
+                    <h3 style="color: var(--text-main);">Alpha Developer</h3>
+                    <p style="color: var(--text-muted); font-size: 14px;">Building Premium Real-time Tech</p>
+                </div>
+            </div>
+            <div class="setting-node" onclick="toggleEngineTheme()">
+                <i class="fas fa-moon"></i>
+                <div class="setting-info"><h4>Dark Mode</h4><p>Switch Application Themes instantly</p></div>
+            </div>
+            <div class="setting-node" onclick="triggerNativeFeedback('Account Settings Secured')">
+                <i class="fas fa-key"></i>
+                <div class="setting-info"><h4>Account</h4><p>Security notifications, change number</p></div>
+            </div>
+            <div class="setting-node" onclick="triggerNativeFeedback('Storage Matrix Refreshed')">
+                <i class="fas fa-data-storage"></i>
+                <div class="setting-info"><h4>Storage and Data</h4><p>Network usage, auto-download logs</p></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- NATIVE CHAT CONVERSATION SCREEN SLIDER -->
+    <div class="chat-room-screen" id="chatRoomSuite">
+        <div class="room-header">
+            <div class="room-meta">
+                <i class="fas fa-arrow-left" onclick="closeConversationSuite()"></i>
+                <img id="roomActiveAvatar" src="" class="item-avatar" style="width: 38px; height: 38px;">
+                <div>
+                    <div id="roomActiveName" style="font-weight: 600; font-size: 16px;">User</div>
+                    <div style="font-size: 11px; color: #d9fdd3;">online</div>
+                </div>
+            </div>
+            <div class="header-icons" style="font-size: 17px; gap: 18px;">
+                <i class="fas fa-video" onclick="executeSuiteCall('Video Call')"></i>
+                <i class="fas fa-phone" onclick="executeSuiteCall('Audio Call')"></i>
+                <i class="fas fa-paperclip" onclick="openGlobalDrawer('Attachments Panel')"></i>
+            </div>
+        </div>
+
+        <div class="messages-canvas" id="roomMessagesCanvas"></div>
+
+        <div class="input-dock">
+            <i class="far fa-face-smile" onclick="triggerNativeFeedback('Emoji Tray Intercepted')"></i>
+            <input type="text" id="roomInputField" class="message-input" placeholder="Type a message" onkeypress="handleInputKeyGate(event)">
+            <button class="dock-action-btn" onclick="commitSuiteMessage()">
+                <i class="fas fa-paper-plane" style="color: white; font-size: 16px;"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- FULL INTERACTIVE CALLS ENGINE VIEW -->
+    <div class="call-overlay" id="callOverlayEngine">
+        <div style="text-align: center;">
+            <img id="callOverlayAvatar" src="" class="item-avatar" style="width: 110px; height: 110px; border: 2px solid rgba(255,255,255,0.2); margin-bottom: 20px;">
+            <h2 id="callOverlayName" style="margin-bottom: 6px;">Contact Name</h2>
+            <div id="callOverlayStatus" style="color: var(--wa-light-green); font-size: 14px; letter-spacing: 1px;">Ringing...</div>
+        </div>
+        <div class="call-buttons">
+            <button class="c-btn" onclick="triggerNativeFeedback('Mic Muted')"><i class="fas fa-microphone-slash"></i></button>
+            <button class="c-btn" onclick="triggerNativeFeedback('Speaker Speaker toggled')"><i class="fas fa-volume-high"></i></button>
+            <button class="c-btn hangup" onclick="terminateEngineCall()"><i class="fas fa-phone-slash"></i></button>
+        </div>
+    </div>
+
+    <!-- GLOBAL DRAWER POPUP FRAMEWORK -->
+    <div class="drawer-overlay" id="globalDrawerFramework" onclick="closeGlobalDrawer()">
+        <div class="drawer-sheet" onclick="event.stopPropagation()">
+            <h3 id="drawerTitle" style="margin-bottom: 20px; font-size: 16px; color: var(--text-main);">Features</h3>
+            <div class="drawer-grid">
+                <div class="drawer-item" onclick="executeDrawerAction('Mute Notifications')"><div class="icon-circle"><i class="fas fa-bell-slash"></i></div><span>Mute Chat</span></div>
+                <div class="drawer-item" onclick="executeDrawerAction('Hold Me Triggered')"><div class="icon-circle"><i class="fas fa-pause"></i></div><span>Hold Me</span></div>
+                <div class="drawer-item" onclick="executeDrawerAction('Voice Note Record')"><div class="icon-circle"><i class="fas fa-microphone"></i></div><span>Voice Chat</span></div>
+                <div class="drawer-item" onclick="executeDrawerAction('Document Dispatched')"><div class="icon-circle"><i class="fas fa-file-pdf"></i></div><span>Document</span></div>
+                <div class="drawer-item" onclick="executeDrawerAction('Gallery Loaded')"><div class="icon-circle"><i class="fas fa-image"></i></div><span>Gallery</span></div>
+                <div class="drawer-item" onclick="closeGlobalDrawer()"><div class="icon-circle" style="background:#ffebe6; color:#ea0038;"><i class="fas fa-times"></i></div><span>Close</span></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Live Memory Storage mocking an industrial-grade remote Database system
+    const databaseEngine = {
+        1: { name: "Emily Johnson", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150", unread: 2, log: [{text: "Hey! Are you available to review the app's source code?", time: "02:10 PM", type: "inbound"}] },
+        2: { name: "Liam Davis", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150", unread: 1, log: [{text: "The server deployment is stable. Let me know when you check.", time: "11:45 AM", type: "inbound"}] },
+        3: { name: "Sophia Martinez", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150", unread: 0, log: [{text: "Voice note transmitted 🎙️ (0:15)", time: "Yesterday", type: "inbound"}] },
+        4: { name: "Noah Wilson", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150", unread: 0, log: [{text: "Let's catch up later tonight over coffee.", time: "Yesterday", type: "outbound"}] }
+    };
+
+    let runtimeActivePointer = null;
+
+    // Compile Active Chat Feed Elements
+    function injectChatRoster(filterQuery = "") {
+        const container = document.getElementById('chatsInjectedContainer');
+        container.innerHTML = '';
+
+        Object.keys(databaseEngine).forEach(id => {
+            const data = databaseEngine[id];
+            if(filterQuery && !data.name.toLowerCase().includes(filterQuery.toLowerCase())) return;
+
+            const logs = data.log;
+            const finalRecord = logs[logs.length - 1];
+
+            const row = document.createElement('div');
+            row.className = 'list-row';
+            row.onclick = () => launchConversationSuite(id);
+
+            row.innerHTML = `
+                <div class="avatar-box">
+                    <img src="${data.avatar}" class="item-avatar">
+                    <div class="online-dot"></div>
+                </div>
+                <div class="item-details">
+                    <div class="row-top">
+                        <span class="item-name">${data.name}</span>
+                        <span class="item-time">${finalRecord ? finalRecord.time : ''}</span>
+                    </div>
+                    <div class="row-bottom">
+                        <span class="item-preview">${finalRecord ? finalRecord.text : 'No history log.'}</span>
+                        ${data.unread > 0 ? `<span class="badge-counter">${data.unread}</span>` : ''}
+                    </div>
+                </div>
+            `;
+            container.appendChild(row);
+        });
+    }
+
+    // Interactive Router Controls
+    function switchActiveTab(element, viewId) {
+        document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
+
+        element.classList.add('active');
+        document.getElementById(viewId).classList.add('active');
+
+        // Hide search view globally on certain settings triggers
+        const searchBox = document.getElementById('masterSearchContainer');
+        searchBox.style.display = (viewId === 'settingsView') ? 'none' : 'block';
+    }
+
+    // Transition Mechanics for Chats Room
+    function launchConversationSuite(id) {
+        runtimeActivePointer = id;
+        const record = databaseEngine[id];
+        record.unread = 0; // Flush notifications count state
+
+        document.getElementById('roomActiveName').innerText = record.name;
+        document.getElementById('roomActiveAvatar').src = record.avatar;
+        document.getElementById('chatRoomSuite').classList.add('open');
+
+        renderActiveSuiteMessages();
+    }
+
+    function closeConversationSuite() {
+        document.getElementById('chatRoomSuite').classList.remove('open');
+        runtimeActivePointer = null;
+        injectChatRoster();
+    }
+
+    function renderActiveSuiteMessages() {
+        const canvas = document.getElementById('roomMessagesCanvas');
+        canvas.innerHTML = '';
+
+        const history = databaseEngine[runtimeActivePointer].log;
+        history.forEach(msg => {
+            const el = document.createElement('div');
+            el.className = `bubble ${msg.type}`;
+            el.innerHTML = `
+                ${msg.text}
+                <div class="timestamp-box">
+                    ${msg.time} ${msg.type === 'outbound' ? '<i class="fas fa-check-double"></i>' : ''}
+                </div>
+            `;
+            canvas.appendChild(el);
+        });
+        canvas.scrollTop = canvas.scrollHeight;
+    }
+
+    // Atomic Input Commit Logic
+    function commitSuiteMessage() {
+        const targetInput = document.getElementById('roomInputField');
+        const content = targetInput.value.trim();
+        if(!content) return;
+
+        const clockStamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        databaseEngine[runtimeActivePointer].log.push({
+            text: content,
+            time: clockStamp,
+            type: 'outbound'
+        });
+
+        targetInput.value = '';
+        renderActiveSuiteMessages();
+
+        // Advanced Simulation Mock Response Engine
+        const lockedContextPointer = runtimeActivePointer;
+        setTimeout(() => {
+            if(runtimeActivePointer === lockedContextPointer) {
+                databaseEngine[runtimeActivePointer].log.push({
+                    text: "Premium System Real-time sync feedback confirmed. ✔️",
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    type: 'inbound'
+                });
+                renderActiveSuiteMessages();
+            }
+        }, 1100);
+    }
+
+    function handleInputKeyGate(e) {
+        if(e.key === 'Enter') commitSuiteMessage();
+    }
+
+    function executeEngineSearch() {
+        const query = document.getElementById('masterSearchInput').value;
+        injectChatRoster(query);
+    }
+
+    // Theme Engine Modification Switch
+    function toggleEngineTheme() {
+        document.body.classList.toggle('dark-mode');
+        triggerNativeFeedback('Application Core Theme Updated');
+    }
+
+    // Overlays Call Systems Interceptor
+    function triggerImmersiveCall(name, avatar) {
+        document.getElementById('callOverlayName').innerText = name;
+        document.getElementById('callOverlayAvatar').src = avatar;
+        document.getElementById('callOverlayStatus').innerText = "Connecting Voice Call...";
+        document.getElementById('callOverlayEngine').style.display = 'flex';
+    }
+
+    function executeSuiteCall(type) {
+        const currentNode = databaseEngine[runtimeActivePointer];
+        document.getElementById('callOverlayName').innerText = currentNode.name;
+        document.getElementById('callOverlayAvatar').src = currentNode.avatar;
+        document.getElementById('callOverlayStatus').innerText = `${type} Ringing...`;
+        document.getElementById('callOverlayEngine').style.display = 'flex';
+    }
+
+    function terminateEngineCall() {
+        document.getElementById('callOverlayEngine').style.display = 'none';
+    }
+
+    // Global Drawsheet Management
+    function openGlobalDrawer(title) {
+        document.getElementById('drawerTitle').innerText = title;
+        document.getElementById('globalDrawerFramework').style.display = 'flex';
+    }
+
+    function closeGlobalDrawer() {
+        document.getElementById('globalDrawerFramework').style.display = 'none';
+    }
+
+    function executeDrawerAction(actionName) {
+        closeGlobalDrawer();
+        alert(`Core Engine Triggered: "${actionName}"`);
+    }
+
+    function triggerNativeFeedback(msg) {
+        alert(`System Action: ${msg}`);
+    }
+
+    // Core Initialization System
+    window.onload = () => {
+        injectChatRoster();
+    };
+</script>
+
+</body>
+</html>
+          
