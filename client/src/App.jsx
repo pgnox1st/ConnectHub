@@ -1,692 +1,629 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 // ========================================================
-// 1. INTELLIGENT EXPERT CO-PILOT ENGINE (NEXUS-AI)
+// 1. INTELLIGENT CO-PILOT RESPONSE CORE (NEXUS ENGINE)
 // ========================================================
-const getNexusAIResponse = (userMessage, hasImage = false) => {
-  const msg = userMessage.toLowerCase().trim();
+const generateNexusResponse = (userMessage, hasAttachment = false) => {
+  const query = userMessage.toLowerCase().trim();
 
-  if (hasImage) {
-    return "I have intercepted the image asset metadata. 📸 Visual structural components successfully analyzed. I can compile this directly into responsive CSS or set up backend handlers for you step-by-step!";
+  if (hasAttachment) {
+    return "Visual structural asset detected and buffered successfully. 📸 The image schema has been analyzed. I can now compile tailored CSS layout parameters or configure backend schema handlers based on this blueprint.";
   }
   
-  if (msg.includes("hello") || msg.includes("hi") || msg.includes("hey")) {
-    return "System fully operational. Hello! I am Nexus-AI, your dedicated development copilot. What amazing layout or feature are we building today? 🚀";
+  if (query.includes("hello") || query.includes("hi") || query.includes("hey") || query.includes("system")) {
+    return "Secure uplink fully operational. Hello! I am Nexus-AI, your dedicated technical development co-pilot. What complex systems or premium layouts are we constructing today? 🚀";
   }
   
-  if (msg.includes("error") || msg.includes("bug") || msg.includes("help")) {
-    return "Don't worry! Share the complete error trace or paste the snippet here. We will debug it step-by-step together like a pro team. 💻🛠️";
+  if (query.includes("error") || query.includes("bug") || query.includes("fail") || query.includes("help")) {
+    return "Understood. Please isolate the error trace or paste the target code snippet directly into this terminal. We will analyze the call stack and debug it systematically. 💻🛠️";
   }
 
-  return `Interesting requirement! Regarding "${userMessage}", we can implement an optimized framework. Should I generate the state logic or build out the styling layout first?`;
+  return `Requirement logged into active system memory. Regarding your instruction: "${userMessage}", we can proceed with an optimized architecture. Should I generate the functional state logic or build out the layout styling matrix first?`;
 };
 
 export default function App() {
-  // Navigation States: 'register' -> 'login' -> 'otp' -> 'chat-room'
-  const [screen, setScreen] = useState('register'); 
+  // Navigation States: 'register' -> 'login' -> 'otp' -> 'terminal'
+  const [currentScreen, setCurrentScreen] = useState('register'); 
 
-  // Form Field Tracking States
-  const [regForm, setRegForm] = useState({ email: '', phone: '', password: '' });
-  const [loginForm, setLoginForm] = useState({ email: '', password: '' });
-  const [inputOtp, setInputOtp] = useState('');
-  const [generatedOtp, setGeneratedOtp] = useState('');
+  // Form Tracking States
+  const [registrationData, setRegistrationData] = useState({ email: '', phone: '', password: '' });
+  const [loginData, setLoginData] = useState({ email: '', password: '' });
+  const [enteredOtp, setEnteredOtp] = useState('');
+  const [systemGeneratedOtp, setSystemGeneratedOtp] = useState('');
 
-  // AI Workspace Thread States
-  const [chatMessages, setChatMessages] = useState([
-    { id: 1, text: "Secure uplink initialized. Hello! I am Nexus-AI, your visual and code logic assistant. You can chat with me, upload designs, and request layout instructions.", sender: 'ai', time: 'Active' }
+  // Workspace Thread States
+  const [terminalHistory, setTerminalHistory] = useState([
+    { id: 1, text: "Uplink verified. Welcome to the Nexus-AI Hub terminal. Secure identity logs confirmed. You can transmit structural directives, attach visual layouts, and evaluate code implementations.", sender: 'system', timestamp: 'Active' }
   ]);
   const [textInput, setTextInput] = useState('');
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [isAiTyping, setIsAiTyping] = useState(false);
+  const [attachedImage, setAttachedImage] = useState(null);
+  const [isEngineProcessing, setIsEngineProcessing] = useState(false);
   
-  const chatBottomRef = useRef(null);
+  const viewportTerminalBottom = useRef(null);
 
-  // Dynamic Library and Style Injector (Replaces index.html manual editing)
+  // Dynamic Content & Library Injector 
   useEffect(() => {
-    // 1. Inject SweetAlert2 Stylesheet directly into Document Head
-    const swalStyle = document.createElement("link");
-    swalStyle.rel = "stylesheet";
-    swalStyle.href = "https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css";
-    document.head.appendChild(swalStyle);
+    // Inject SweetAlert2 Style Sheet Core
+    const stylesheetNode = document.createElement("link");
+    stylesheetNode.rel = "stylesheet";
+    stylesheetNode.href = "https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css";
+    document.head.appendChild(stylesheetNode);
 
-    // 2. Inject SweetAlert2 Core Script directly into Document Head
-    const swalScript = document.createElement("script");
-    swalScript.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11";
-    swalScript.async = true;
-    document.head.appendChild(swalScript);
+    // Inject SweetAlert2 Script Core
+    const scriptNode = document.createElement("script");
+    scriptNode.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11";
+    scriptNode.async = true;
+    document.head.appendChild(scriptNode);
 
-    // 3. Request system web push permissions
+    // Prompt for Web Notification API Permissions
     if ("Notification" in window && Notification.permission === "default") {
       Notification.requestPermission();
     }
 
     return () => {
-      document.head.removeChild(swalStyle);
-      document.head.removeChild(swalScript);
+      document.head.removeChild(stylesheetNode);
+      document.head.removeChild(scriptNode);
     };
   }, []);
 
-  // Auto-scroll chat terminal interface
+  // Track and lock scrolling behavior to the baseline of the terminal viewport
   useEffect(() => {
-    if (chatBottomRef.current) {
-      chatBottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (viewportTerminalBottom.current) {
+      viewportTerminalBottom.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [chatMessages, isAiTyping]);
+  }, [terminalHistory, isEngineProcessing]);
 
   // ========================================================
-  // 2. HIGH-FIDELITY COMPACT POPUPS & VALIDATION SCHEMES
+  // 2. ALERT VALIDATION & GATEKEEPER INTERCEPTORS
   // ========================================================
   
-  const fireCompactAlert = (icon, title, text) => {
+  const triggerCompactAlert = (statusIcon, headline, description) => {
     if (window.Swal) {
       window.Swal.fire({
-        icon: icon,
-        title: title,
-        text: text,
-        width: '280px', // Small compact real size requested
+        icon: statusIcon,
+        title: headline,
+        text: description,
+        width: '280px', // Exact compact sizing constraint matching specifications
         confirmButtonColor: '#bc13fe',
+        background: '#131c2e',
+        color: '#ffffff',
         customClass: {
-          popup: 'swal2-popup-small',
-          title: 'swal2-title',
-          htmlContainer: 'swal2-html-container'
+          popup: 'nexus-alert-panel',
+          title: 'nexus-alert-title',
+          htmlContainer: 'nexus-alert-desc'
         }
       });
     } else {
-      alert(`${title}: ${text}`);
+      alert(`${headline}: ${description}`);
     }
   };
 
-  const validateEmailFormat = (email) => {
-    return String(email).toLowerCase().match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
-  };
-
-  const dispatchRealNotification = (code) => {
+  const dispatchSystemTrayNotification = (token) => {
     if ("Notification" in window && Notification.permission === "granted") {
-      new Notification("Nexus Security Token", {
-        body: `Your real system validation code is: ${code}`,
+      new Notification("Security Operations Center", {
+        body: `Your access authentication signature token is: ${token}`,
         icon: "https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg"
       });
     }
   };
 
-  // Step A: Register Account & Save to persistent LocalStorage
-  const handleRegisterSubmit = (e) => {
+  // Action Gate A: Form Validation and User Registration
+  const handleRegistrationProcess = (e) => {
     e.preventDefault();
     
-    if (!validateEmailFormat(regForm.email)) {
-      fireCompactAlert('error', 'Error!', 'Enter a valid personal email.');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(registrationData.email)) {
+      triggerCompactAlert('error', 'Invalid Input', 'Provide a properly formatted enterprise or personal email address.');
       return;
     }
-    if (regForm.phone.length !== 10 || isNaN(regForm.phone)) {
-      fireCompactAlert('info', 'Info!', 'Enter a 10-digit number.');
+    if (registrationData.phone.length !== 10 || isNaN(registrationData.phone)) {
+      triggerCompactAlert('info', 'Format Notice', 'Phone parameters must consist of an exact 10-digit configuration.');
       return;
     }
-    if (regForm.password.length < 6) {
-      fireCompactAlert('error', 'Error!', 'Incorrect account password pattern.');
+    if (registrationData.password.length < 6) {
+      triggerCompactAlert('error', 'Security Policy', 'Account credentials must possess a minimum string density of 6 units.');
       return;
     }
 
-    // Prevents dynamic reset of credentials on page reload
-    localStorage.setItem('persistent_email', regForm.email.toLowerCase().trim());
-    localStorage.setItem('persistent_password', regForm.password);
-    localStorage.setItem('persistent_phone', regForm.phone);
+    // Write parameters into persistent storage matrices
+    localStorage.setItem('nexus_stored_email', registrationData.email.toLowerCase().trim());
+    localStorage.setItem('nexus_stored_password', registrationData.password);
 
-    fireCompactAlert('success', 'Registered!', 'Account configuration saved.');
-    setScreen('login');
+    triggerCompactAlert('success', 'Profile Created', 'Credentials secured in active database segment.');
+    setCurrentScreen('login');
   };
 
-  // Step B: Authenticate login details against LocalStorage records
-  const handleLoginSubmit = (e) => {
+  // Action Gate B: Authentication Check & Multi-Factor Token Assembly
+  const handleLoginProcess = (e) => {
     e.preventDefault();
 
-    const storedEmail = localStorage.getItem('persistent_email');
-    const storedPassword = localStorage.getItem('persistent_password');
+    const verifiedTargetEmail = localStorage.getItem('nexus_stored_email');
+    const verifiedTargetPassword = localStorage.getItem('nexus_stored_password');
 
-    if (!storedEmail) {
-      fireCompactAlert('warning', 'Warning!', 'No system record discovered. Please register.');
+    if (!verifiedTargetEmail) {
+      triggerCompactAlert('warning', 'Void System', 'No configuration record detected on this cluster. Complete registration.');
       return;
     }
 
-    if (loginForm.email.toLowerCase().trim() !== storedEmail || loginForm.password !== storedPassword) {
-      fireCompactAlert('error', 'Error!', 'Incorrect account password pattern.');
+    if (loginData.email.toLowerCase().trim() !== verifiedTargetEmail || loginData.password !== verifiedTargetPassword) {
+      triggerCompactAlert('error', 'Auth Failed', 'Credentials mismatched against registered encryption keys.');
       return;
     }
 
-    // Generate real 6-digit random code
-    const tokenCode = Math.floor(100000 + Math.random() * 900000).toString();
-    setGeneratedOtp(tokenCode);
+    // Manufacture an un-guessable verification key
+    const numericalToken = Math.floor(100000 + Math.random() * 900000).toString();
+    setSystemGeneratedOtp(numericalToken);
 
-    // Call browser notifications
-    dispatchRealNotification(tokenCode);
+    // Push token out to external interfaces
+    dispatchSystemTrayNotification(numericalToken);
 
     if (window.Swal) {
       window.Swal.fire({
         icon: 'info',
-        title: 'Verification Code',
-        html: `A security code has been sent to your tray.<br><br><span style="font-size: 16px; color: #bc13fe; font-weight: bold; background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 6px;">Backup: ${tokenCode}</span>`,
+        title: 'Security Dispatch',
+        html: `An authorization key has been appended to your system notification tree.<br><br><span style="font-size: 16px; color: #bc13fe; font-weight: bold; background: rgba(0,0,0,0.4); padding: 5px 12px; border-radius: 6px; letter-spacing: 1px;">Fallback Link: ${numericalToken}</span>`,
         width: '280px',
-        confirmButtonColor: '#bc13fe'
+        confirmButtonColor: '#bc13fe',
+        background: '#131c2e',
+        color: '#ffffff'
       });
     }
 
-    setScreen('otp');
+    setCurrentScreen('otp');
   };
 
-  // Step C: Validate security token code
-  const handleVerifyOtpSubmit = (e) => {
+  // Action Gate C: Verification Token Assessment
+  const handleTokenVerificationProcess = (e) => {
     e.preventDefault();
 
-    if (inputOtp !== generatedOtp) {
-      fireCompactAlert('error', 'Error!', 'Incorrect account password pattern.');
+    if (enteredOtp !== systemGeneratedOtp) {
+      triggerCompactAlert('error', 'Access Denied', 'Verification mismatch. Token check evaluated as corrupt.');
       return;
     }
 
-    fireCompactAlert('success', 'Access Granted', 'Terminal network synchronized.');
-    setScreen('chat-room');
+    triggerCompactAlert('success', 'Identity Verified', 'Welcome to your active processing partition.');
+    setCurrentScreen('terminal');
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setSelectedImage(reader.result);
-      reader.readAsDataURL(file);
+  // Action Gate D: Convert File Buffer Data Streams
+  const processAssetInput = (e) => {
+    const rawAssetFile = e.target.files[0];
+    if (rawAssetFile) {
+      const systemStreamReader = new FileReader();
+      systemStreamReader.onloadend = () => setAttachedImage(systemStreamReader.result);
+      systemStreamReader.readAsDataURL(rawAssetFile);
     }
   };
 
-  // Step D: Broadcast message context stream to Nexus-AI
-  const handleSendMessage = () => {
-    if (!textInput.trim() && !selectedImage) return;
+  // Action Gate E: Package Context and Transmit via Network Array
+  const dispatchTerminalPayload = () => {
+    if (!textInput.trim() && !attachedImage) return;
 
-    const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const userPayload = { id: Date.now(), text: textInput, sender: 'user', time: currentTime, image: selectedImage };
+    const isolatedTimestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const userPayloadFrame = { id: Date.now(), text: textInput, sender: 'user', timestamp: isolatedTimestamp, visualStream: attachedImage };
 
-    setChatMessages(prev => [...prev, userPayload]);
+    setTerminalHistory(prevData => [...prevData, userPayloadFrame]);
     
-    const textSnapshot = textInput;
-    const imageSnapshot = selectedImage;
+    const preservedText = textInput;
+    const preservedImage = attachedImage;
     
     setTextInput('');
-    setSelectedImage(null);
+    setAttachedImage(null);
 
-    setIsAiTyping(true);
+    setIsEngineProcessing(true);
     setTimeout(() => {
-      setIsAiTyping(false);
-      const aiReply = getNexusAIResponse(textSnapshot, !!imageSnapshot);
-      const aiPayload = { id: Date.now() + 1, text: aiReply, sender: 'ai', time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), image: null };
-      setChatMessages(prev => [...prev, aiPayload]);
-    }, 1200);
+      setIsEngineProcessing(false);
+      const automatedResponse = generateNexusResponse(preservedText, !!preservedImage);
+      const enginePayloadFrame = { id: Date.now() + 1, text: automatedResponse, sender: 'system', timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), visualStream: null };
+      setTerminalHistory(prevData => [...prevData, enginePayloadFrame]);
+    }, 1300);
   };
 
-  // Simulated Game Collection Assets matching your pattern
-  const structuralApps = [
-    { name: "Free Fire", img: "freefire.png.jpg" },
-    { name: "COD Mobile", img: "codm.png.jpg" },
-    { name: "Shells", img: "shells.png.jpg" },
-    { name: "AOV", img: "aov.png.jpg" },
-    { name: "Undawn", img: "hero-banner.jpg.jpg" },
-    { name: "SPEED", img: "speed.png.jpg" },
-    { name: "Haikyu!!", img: "haikyu.png.jpg" },
-    { name: "Delta Force", img: "delta.png.jpg" }
-  ];
-
   return (
-    <div style={styles.pageBodyWrapper}>
-      <div style={styles.backgroundCoverImage}></div>
+    <div style={uiStyles.mainViewportWrapper}>
+      <div style={uiStyles.matrixBackgroundCanvas}></div>
       
-      {/* ADAPTIVE HEADER SYSTEM */}
-      <header style={styles.siteHeader}>
-        <div style={styles.headerLeftBlock}>
-          <img src="https://raw.githubusercontent.com/northway656-create/myflaskapp/main/static/icons/garena_full_logo_eyes.png.jpg" style={styles.brandLogoAsset} alt="Logo" />
-          <div style={styles.headerVerticalLine}></div>
-          <span style={styles.headerTitleText}>Official Top Up Center</span>
+      {/* GLOBAL MANAGEMENT NAVIGATION BAR */}
+      <header style={uiStyles.navigationBar}>
+        <div style={uiStyles.brandingBlock}>
+          <div style={uiStyles.brandAccentOrb}></div>
+          <span style={uiStyles.brandPrimaryLabel}>NEXUS//<span>CORE</span></span>
         </div>
-        <div style={styles.helpCenterBtn} onClick={() => window.open('https://ffsupport.garena.com/', '_blank')}>Help Center</div>
+        <div style={uiStyles.environmentStatusLabel}>Operational Node</div>
       </header>
 
       {/* CORE FRAMEWORK WORKSPACE */}
-      <div style={styles.mainLayoutContainer}>
+      <main style={uiStyles.centerContainerLayout}>
         
-        {/* PREMIUM RENDERED GAME GRID (VISIBLE ON LOGIN/REGISTER SECTIONS) */}
-        {screen !== 'chat-room' && (
-          <div style={styles.gridContainerRow}>
-            {structuralApps.map((app, index) => (
-              <div key={index} style={styles.gridGameItem}>
-                <img src={`https://raw.githubusercontent.com/northway656-create/myflaskapp/main/static/icons/${app.img}`} style={styles.gridItemThumbnail} alt={app.name} />
-                <p style={styles.gridItemLabelText}>{app.name}</p>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* SCREEN 1: REGISTER COMPONENT CARD */}
-        {screen === 'register' && (
-          <div style={styles.glassmorphicCard}>
-            <h1 style={styles.cardMainHeading}>Rewards Redemption Site</h1>
-            <p style={styles.cardSubText}>Please register your secure portal profile.</p>
-            <form onSubmit={handleRegisterSubmit} style={styles.flexFormStack}>
-              <input type="email" placeholder="Email Address" value={regForm.email} onChange={e => setRegForm({...regForm, email: e.target.value})} style={styles.darkInputText} required />
-              <input type="tel" placeholder="Mobile Number" value={regForm.phone} onChange={e => setRegForm({...regForm, phone: e.target.value})} maxLength={10} style={styles.darkInputText} required />
-              <input type="password" placeholder="Password Setup" value={regForm.password} onChange={e => setRegForm({...regForm, password: e.target.value})} style={styles.darkInputText} required />
-              <button type="submit" style={styles.neonPurpleBtn}>CREATE ACCOUNT</button>
+        {/* VIEWPORT AREA 1: SECURE SUBSCRIPTION BLOCK */}
+        {currentScreen === 'register' && (
+          <div style={uiStyles.cyberFormPanel}>
+            <h1 style={uiStyles.panelTitleHeader}>System Registration</h1>
+            <p style={uiStyles.panelSubtitleText}>Configure profile access parameters below</p>
+            <form onSubmit={handleRegistrationProcess} style={uiStyles.formFlexStack}>
+              <input type="email" placeholder="Network Identification (Email)" value={registrationData.email} onChange={e => setRegistrationData({...registrationData, email: e.target.value})} style={uiStyles.industrialInputField} required />
+              <input type="tel" placeholder="Communication Node (Mobile)" value={registrationData.phone} onChange={e => setRegistrationData({...registrationData, phone: e.target.value})} maxLength={10} style={uiStyles.industrialInputField} required />
+              <input type="password" placeholder="Passphrase Matrix" value={registrationData.password} onChange={e => setRegistrationData({...registrationData, password: e.target.value})} style={uiStyles.industrialInputField} required />
+              <button type="submit" style={uiStyles.neonExecutionButton}>Deploy Profile Credentials</button>
             </form>
-            <p style={styles.authToggleFooter}>Already configured? <span onClick={() => setScreen('login')} style={styles.authToggleLink}>Login</span></p>
+            <p style={uiStyles.navigationInterchangeLink}>System profile configured? <span onClick={() => setCurrentScreen('login')} style={uiStyles.interactiveHighlightSpan}>Authenticate</span></p>
           </div>
         )}
 
-        {/* SCREEN 2: LOGIN COMPONENT CARD */}
-        {screen === 'login' && (
-          <div style={styles.glassmorphicCard}>
-            <h1 style={styles.cardMainHeading}>Rewards Redemption Site</h1>
-            <p style={styles.cardSubText}>Please log in to your developer environment.</p>
-            <form onSubmit={handleLoginSubmit} style={styles.flexFormStack}>
-              <input type="email" placeholder="Email Address" value={loginForm.email} onChange={e => setLoginForm({...loginForm, email: e.target.value})} style={styles.darkInputText} required />
-              <input type="password" placeholder="Account Password" value={loginForm.password} onChange={e => setLoginForm({...loginForm, password: e.target.value})} style={styles.darkInputText} required />
-              <button type="submit" style={styles.neonPurpleBtn}>LOG IN NOW</button>
+        {/* VIEWPORT AREA 2: VERIFICATION GATE ENTRY */}
+        {currentScreen === 'login' && (
+          <div style={uiStyles.cyberFormPanel}>
+            <h1 style={uiStyles.panelTitleHeader}>Identity Check</h1>
+            <p style={uiStyles.panelSubtitleText}>Input core verification markers to initialize token dispatch</p>
+            <form onSubmit={handleLoginProcess} style={uiStyles.formFlexStack}>
+              <input type="email" placeholder="Network Identification" value={loginData.email} onChange={e => setLoginData({...loginData, email: e.target.value})} style={uiStyles.industrialInputField} required />
+              <input type="password" placeholder="Passphrase Key" value={loginData.password} onChange={e => setLoginData({...loginData, password: e.target.value})} style={uiStyles.industrialInputField} required />
+              <button type="submit" style={uiStyles.neonExecutionButton}>Request Authorization Token</button>
             </form>
-            <p style={styles.authToggleFooter}>Need an environment account? <span onClick={() => setScreen('register')} style={styles.authToggleLink}>Register Here</span></p>
+            <p style={uiStyles.navigationInterchangeLink}>Need profile assignment? <span onClick={() => setCurrentScreen('register')} style={uiStyles.interactiveHighlightSpan}>Register Workspace</span></p>
           </div>
         )}
 
-        {/* SCREEN 3: HIGH-FIDELITY COMPACT VERIFICATION CARD */}
-        {screen === 'otp' && (
-          <div style={styles.glassmorphicCard}>
-            <h1 style={styles.cardMainHeading}>Verification Code</h1>
-            <p style={styles.cardSubText}>A secure authorization key has been transmitted to your device.</p>
-            <form onSubmit={handleVerifyOtpSubmit} style={styles.flexFormStack}>
-              <input type="text" placeholder="••••••" value={inputOtp} onChange={e => setInputOtp(e.target.value)} maxLength={6} style={{ ...styles.darkInputText, textAlign: 'center', fontSize: '22px', letterSpacing: '8px', color: '#bc13fe' }} required />
-              <button type="submit" style={styles.neonPurpleBtn}>VERIFY & CLAIM</button>
+        {/* VIEWPORT AREA 3: TWO-FACTOR KEY INTERCEPTOR */}
+        {currentScreen === 'otp' && (
+          <div style={uiStyles.cyberFormPanel}>
+            <h1 style={uiStyles.panelTitleHeader}>Token Check</h1>
+            <p style={uiStyles.panelSubtitleText}>Provide the 6-digit cryptographic security sequence</p>
+            <form onSubmit={handleTokenVerificationProcess} style={uiStyles.formFlexStack}>
+              <input type="text" placeholder="••••••" value={enteredOtp} onChange={e => setEnteredOtp(e.target.value)} maxLength={6} style={{ ...uiStyles.industrialInputField, textAlign: 'center', fontSize: '24px', letterSpacing: '8px', color: '#bc13fe', fontWeight: 'bold' }} required />
+              <button type="submit" style={uiStyles.neonExecutionButton}>Verify Access Token</button>
             </form>
           </div>
         )}
 
-        {/* SCREEN 4: ADVANCED CHAT ROOM ENVIRONMENT TERMINAL */}
-        {screen === 'chat-room' && (
-          <div style={styles.terminalContainerDock}>
-            <div style={styles.terminalHeader}>
+        {/* VIEWPORT AREA 4: HIGH-FIDELITY UNIFIED CO-PILOT WORKSPACE */}
+        {currentScreen === 'terminal' && (
+          <div style={uiStyles.mainframeChatDock}>
+            <div style={uiStyles.dockHeaderControls}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={styles.tealStatusIndicatorDot}></div>
+                <div style={uiStyles.pulsingGreenNode}></div>
                 <div>
-                  <b style={{ fontSize: '15px', color: '#ffffff' }}>Nexus-AI Hub Console</b>
-                  <span style={{ fontSize: '11px', color: '#00a884', display: 'block' }}>Operational Development Engine</span>
+                  <b style={{ fontSize: '15px', color: '#ffffff', letterSpacing: '0.5px' }}>Nexus-AI Hub Console</b>
+                  <span style={{ fontSize: '11px', color: '#00a884', display: 'block', marginTop: '2px' }}>Active Core Matrix Pipeline</span>
                 </div>
               </div>
-              <button onClick={() => setScreen('login')} style={styles.terminalDisconnectBtn}>Disconnect Terminal</button>
+              <button onClick={() => setCurrentScreen('login')} style={uiStyles.terminalSeverConnectionBtn}>Sever Session Array</button>
             </div>
 
-            <div style={styles.terminalChatViewport}>
-              {chatMessages.map(msg => (
-                <div key={msg.id} style={{ ...styles.messageBubbleCell, alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start', backgroundColor: msg.sender === 'user' ? '#005c4b' : 'rgba(255,255,255,0.06)', border: msg.sender === 'user' ? 'none' : '1px solid rgba(255,255,255,0.08)' }}>
-                  <span style={{ fontSize: '10px', fontWeight: 'bold', marginBottom: '5px', color: msg.sender === 'user' ? '#00a884' : '#bc13fe', display: 'block' }}>
-                    {msg.sender === 'user' ? 'Developer Profile' : 'Nexus-AI System'}
+            {/* Messaging Display Module */}
+            <div style={uiStyles.dockLiveViewport}>
+              {terminalHistory.map(item => (
+                <div key={item.id} style={{ ...uiStyles.messageBubbleCell, alignSelf: item.sender === 'user' ? 'flex-end' : 'flex-start', backgroundColor: item.sender === 'user' ? '#005c4b' : 'rgba(255, 255, 255, 0.05)', border: item.sender === 'user' ? 'none' : '1px solid rgba(255,255,255,0.06)' }}>
+                  <span style={{ fontSize: '10px', fontWeight: 'bold', marginBottom: '6px', color: item.sender === 'user' ? '#00a884' : '#bc13fe', display: 'block', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    {item.sender === 'user' ? 'Local Operator' : 'Nexus Engine System'}
                   </span>
-                  {msg.image && <img src={msg.image} alt="User asset stream" style={styles.bubbleEmbeddedAsset} />}
-                  <div style={{ fontSize: '14px', lineHeight: '1.5', color: '#ffffff', wordBreak: 'break-word' }}>{msg.text}</div>
-                  <div style={styles.bubbleTimestamp}>{msg.time}</div>
+                  {item.visualStream && <img src={item.visualStream} alt="System Payload Stream" style={uiStyles.bubbleRenderedImage} />}
+                  <div style={{ fontSize: '14.5px', lineHeight: '1.5', color: '#eef2f7', wordBreak: 'break-word' }}>{item.text}</div>
+                  <div style={uiStyles.bubbleInternalTime}>{item.timestamp}</div>
                 </div>
               ))}
-              {isAiTyping && (
-                <div style={{ ...styles.messageBubbleCell, alignSelf: 'flex-start', backgroundColor: 'rgba(255,255,255,0.04)', color: '#bc13fe', fontStyle: 'italic', fontSize: '13px' }}>
-                  Nexus-AI compiling layout data matrices...🚀
+              {isEngineProcessing && (
+                <div style={{ ...uiStyles.messageBubbleCell, alignSelf: 'flex-start', backgroundColor: 'rgba(255,255,255,0.02)', color: '#bc13fe', fontStyle: 'italic', fontSize: '13px' }}>
+                  Nexus Core processing instructions... ⚙️
                 </div>
               )}
-              <div ref={chatBottomRef} />
+              <div ref={viewportTerminalBottom} />
             </div>
 
-            {selectedImage && (
-              <div style={styles.thumbnailContextBar}>
-                <img src={selectedImage} alt="Attachment Buffer" style={styles.contextThumbImg} />
-                <button onClick={() => setSelectedImage(null)} style={styles.purgeContextBtn}>Purge File Context ✕</button>
+            {/* Media Attachment Pre-flight Viewport */}
+            {attachedImage && (
+              <div style={uiStyles.contextBufferBar}>
+                <img src={attachedImage} alt="Attachment Preview" style={uiStyles.bufferThumbnailImage} />
+                <button onClick={() => setAttachedImage(null)} style={uiStyles.purgeContextButton}>Flush Attachment Context ✕</button>
               </div>
             )}
 
-            <div style={styles.terminalInputDock}>
-              <label style={styles.fileLabelBtn}>
-                📁 Photo
-                <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
+            {/* User Interaction Console Bar */}
+            <div style={uiStyles.dockUserInteractionConsole}>
+              <label style={uiStyles.mediaAttachButtonTrigger}>
+                📁 Add Image
+                <input type="file" accept="image/*" onChange={processAssetInput} style={{ display: 'none' }} />
               </label>
-              <input type="text" placeholder="Type a layout instruction or communicate queries..." value={textInput} onChange={e => setTextInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSendMessage()} style={styles.terminalMainInputField} />
-              <button onClick={handleSendMessage} style={styles.terminalSendBtn}>Send</button>
+              <input type="text" placeholder="Transmit systems parameters or query core application logic..." value={textInput} onChange={e => setTextInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && dispatchTerminalPayload()} style={uiStyles.terminalTextEntryField} />
+              <button onClick={dispatchTerminalPayload} style={uiStyles.terminalTransmitButton}>Execute</button>
             </div>
           </div>
         )}
 
-      </div>
+      </main>
 
-      {/* FOOTER AREA MATCHING THE FLASK SPECIFICATIONS */}
-      <footer style={styles.siteFooter}>
-        <img src="https://raw.githubusercontent.com/northway656-create/myflaskapp/main/static/icons/free-fire-logo.jpg.jpg" style={styles.footerBrandLogoAsset} alt="Footer Logo" />
-        <div style={styles.footerTextBlock}>
-          <p>Copyright © Garena International Environment System.</p>
-          <p>Trademarks belong to their respective execution owners. All rights Reserved.</p>
-        </div>
+      {/* FOOTER LAYER */}
+      <footer style={uiStyles.mainframeFooter}>
+        SECURE MULTI-FACTOR CRYPTOGRAPHIC INTERFACE MATRIX // NEXUS-AI PROTOCOLS IN EFFECT © 2026
       </footer>
     </div>
   );
 }
 
 // ========================================================
-// 3. CLEAN INDUSTRIAL GLASS-NEON DESIGN MATRICES
+// 3. INDUSTRIAL CYBER-CYAN & NEO-PURPLE UI DESIGN THEME
 // ========================================================
-const styles = {
-  pageBodyWrapper: {
+const uiStyles = {
+  mainViewportWrapper: {
     width: '100vw',
     height: '100vh',
-    backgroundColor: '#050a18',
+    backgroundColor: '#040814',
     color: '#ffffff',
-    fontFamily: '"Roboto", sans-serif',
+    fontFamily: '"SF Pro Display", -apple-system, sans-serif',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-between',
     margin: 0,
-    overflow: 'hidden'
+    overflow: 'hidden',
+    position: 'relative'
   },
-  backgroundCoverImage: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    background: "url('https://raw.githubusercontent.com/northway656-create/myflaskapp/main/5e2003ebfaf9ed29a40dc2f5db3a8aad%20(1).jpg') no-repeat center top",
-    backgroundSize: 'cover',
-    filter: 'brightness(0.25)',
-    zIndex: -1
+  matrixBackgroundCanvas: {
+    position: 'absolute',
+    top: 0, left: 0, width: '100%', height: '100%',
+    background: 'radial-gradient(circle at 50% 15%, rgba(188, 19, 254, 0.15) 0%, transparent 65%), radial-gradient(circle at 10% 85%, rgba(0, 168, 132, 0.05) 0%, transparent 50%)',
+    zIndex: 0
   },
-  siteHeader: {
+  navigationBar: {
     width: '100%',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    padding: '0 15px',
+    backgroundColor: 'rgba(10, 17, 34, 0.85)',
+    backdropFilter: 'blur(16px)',
+    WebkitBackdropFilter: 'blur(16px)',
+    padding: '0 30px',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    height: '55px',
-    borderBottom: '1px solid rgba(0,0,0,0.05)',
+    height: '60px',
+    borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
     zIndex: 10
   },
-  headerLeftBlock: {
+  brandingBlock: {
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
+    gap: '10px'
   },
-  brandLogoAsset: {
-    height: '28px',
-    objectFit: 'contain'
-  },
-  headerVerticalLine: {
-    width: '1px',
-    height: '24px',
-    backgroundColor: '#e0e0e0',
-    margin: '0 12px'
-  },
-  headerTitleText: {
-    color: '#333333',
-    fontSize: '14px',
-    fontWeight: '500'
-  },
-  helpCenterBtn: {
+  brandAccentOrb: {
+    width: '12px',
+    height: '12px',
+    borderRadius: '50%',
     backgroundColor: '#bc13fe',
-    color: '#ffffff',
-    padding: '6px 14px',
-    borderRadius: '4px',
+    boxShadow: '0 0 10px #bc13fe'
+  },
+  brandPrimaryLabel: {
+    fontSize: '16px',
+    fontWeight: '800',
+    letterSpacing: '1.5px',
+    color: '#ffffff'
+  },
+  environmentStatusLabel: {
+    backgroundColor: 'rgba(188, 19, 254, 0.1)',
+    color: '#bc13fe',
+    border: '1px solid rgba(188, 19, 254, 0.25)',
+    padding: '4px 12px',
+    borderRadius: '6px',
     fontSize: '11px',
     fontWeight: '700',
-    cursor: 'pointer'
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px'
   },
-  mainLayoutContainer: {
+  centerContainerLayout: {
     flex: 1,
     width: '100%',
-    maxWidth: '400px',
+    maxWidth: '1000px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '0 12px',
-    overflowY: 'auto'
+    padding: '0 20px',
+    zIndex: 5
   },
-  gridContainerRow: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)',
-    gap: '12px',
-    margin: '15px 0',
-    width: '100%'
-  },
-  gridGameItem: {
-    textAlign: 'center',
-    display: 'block'
-  },
-  gridItemThumbnail: {
-    width: '54px',
-    height: '54px',
-    borderRadius: '14px',
-    border: '1px solid rgba(188, 19, 254, 0.2)',
-    objectFit: 'cover'
-  },
-  gridItemLabelText: {
-    fontSize: '9px',
-    marginTop: '6px',
-    color: 'rgba(255,255,255,0.9)',
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis'
-  },
-  glassmorphicCard: {
-    background: 'rgba(255, 255, 255, 0.07)',
+  cyberFormPanel: {
+    background: 'rgba(13, 22, 43, 0.45)',
     backdropFilter: 'blur(25px)',
     WebkitBackdropFilter: 'blur(25px)',
-    border: '1px solid rgba(255, 255, 255, 0.12)',
+    border: '1px solid rgba(255, 255, 255, 0.08)',
     borderRadius: '20px',
-    padding: '25px',
+    padding: '40px',
     width: '100%',
-    boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
-    textAlign: 'center',
-    marginBottom: '15px'
+    maxWidth: '430px',
+    boxShadow: '0 20px 50px rgba(0, 0, 0, 0.55)',
+    textAlign: 'center'
   },
-  cardMainHeading: {
-    fontSize: '18px',
+  panelTitleHeader: {
+    fontSize: '24px',
     fontWeight: '800',
-    color: '#bc13fe',
-    textTransform: 'uppercase',
-    margin: '0 0 5px 0'
+    color: '#ffffff',
+    letterSpacing: '-0.5px',
+    margin: '0 0 6px 0'
   },
-  cardSubText: {
+  panelSubtitleText: {
     fontSize: '14px',
-    color: 'rgba(255,255,255,0.8)',
-    margin: '0 0 25px 0',
-    fontWeight: '400'
+    color: 'rgba(255, 255, 255, 0.55)',
+    margin: '0 0 30px 0',
+    lineHeight: '1.4'
   },
-  flexFormStack: {
+  formFlexStack: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '14px'
+    gap: '16px'
   },
-  darkInputText: {
+  industrialInputField: {
     width: '100%',
-    background: 'rgba(0, 0, 0, 0.2)',
-    border: '1px solid rgba(255, 255, 255, 0.15)',
+    background: 'rgba(3, 7, 18, 0.4)',
+    border: '1px solid rgba(255, 255, 255, 0.12)',
     color: '#ffffff',
     borderRadius: '10px',
-    padding: '14px',
-    fontSize: '14px',
+    padding: '15px 16px',
+    fontSize: '14.5px',
     outline: 'none',
-    boxSizing: 'border-box'
+    boxSizing: 'border-box',
+    transition: 'border-color 0.2s ease'
   },
-  neonPurpleBtn: {
+  neonExecutionButton: {
     width: '100%',
     background: 'linear-gradient(135deg, #bc13fe, #7a0bc0)',
     color: '#ffffff',
     fontWeight: '700',
-    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
     border: 'none',
     borderRadius: '10px',
     padding: '16px',
     cursor: 'pointer',
-    fontSize: '13.5px'
+    fontSize: '14px',
+    marginTop: '6px',
+    boxShadow: '0 4px 15px rgba(188, 19, 254, 0.25)'
   },
-  authToggleFooter: {
+  navigationInterchangeLink: {
     fontSize: '13px',
-    color: 'rgba(255,255,255,0.6)',
-    marginTop: '20px',
-    marginBottom: 0
+    color: 'rgba(255, 255, 255, 0.45)',
+    marginTop: '25px',
+    marginibe: 0
   },
-  authToggleLink: {
+  interactiveHighlightSpan: {
     color: '#bc13fe',
     cursor: 'pointer',
-    fontWeight: '600',
+    fontWeight: '700',
     textDecoration: 'underline'
   },
-  terminalContainerDock: {
-    width: '100vw',
-    maxWidth: '850px',
-    height: '75vh',
-    background: 'rgba(17, 27, 33, 0.9)',
+  mainframeChatDock: {
+    width: '100%',
+    height: '76vh',
+    background: 'rgba(10, 17, 32, 0.85)',
     backdropFilter: 'blur(20px)',
-    border: '1px solid rgba(255,255,255,0.1)',
+    border: '1px solid rgba(255, 255, 255, 0.06)',
     borderRadius: '16px',
     display: 'flex',
     flexDirection: 'column',
     overflow: 'hidden',
-    boxShadow: '0 20px 45px rgba(0,0,0,0.6)',
-    margin: '10px 0'
+    boxShadow: '0 25px 60px rgba(0, 0, 0, 0.6)'
   },
-  terminalHeader: {
+  dockHeaderControls: {
     height: '65px',
-    backgroundColor: '#202c33',
-    padding: '0 20px',
+    backgroundColor: '#131f37',
+    padding: '0 24px',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderBottom: '1px solid rgba(255,255,255,0.06)'
+    borderBottom: '1px solid rgba(255, 255, 255, 0.05)'
   },
-  tealStatusIndicatorDot: {
+  pulsingGreenNode: {
     width: '10px',
     height: '10px',
     backgroundColor: '#00a884',
     borderRadius: '50%',
-    boxShadow: '0 0 8px #00a884'
+    boxShadow: '0 0 10px #00a884'
   },
-  terminalDisconnectBtn: {
+  terminalSeverConnectionBtn: {
     background: 'none',
-    border: '1px solid #ea0038',
-    color: '#ea0038',
-    padding: '6px 12px',
+    border: '1px solid #ff3b30',
+    color: '#ff3b30',
+    padding: '6px 14px',
     borderRadius: '6px',
     cursor: 'pointer',
     fontSize: '12px',
-    fontWeight: '600'
+    fontWeight: '600',
+    transition: 'all 0.2s ease'
   },
-  terminalChatViewport: {
+  dockLiveViewport: {
     flex: 1,
     overflowY: 'auto',
-    padding: '20px',
+    padding: '24px',
     display: 'flex',
     flexDirection: 'column',
-    gap: '14px',
-    backgroundColor: '#0b141a'
+    gap: '16px',
+    backgroundColor: '#070d19'
   },
   messageBubbleCell: {
     maxWidth: '70%',
-    padding: '12px 16px',
-    borderRadius: '10px',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.15)'
+    padding: '14px 18px',
+    borderRadius: '12px',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
   },
-  bubbleEmbeddedAsset: {
+  bubbleRenderedImage: {
     maxWidth: '100%',
-    maxHeight: '180px',
-    borderRadius: '6px',
-    marginBottom: '8px',
-    display: 'block'
+    maxHeight: '200px',
+    borderRadius: '8px',
+    marginBottom: '10px',
+    display: 'block',
+    border: '1px solid rgba(255,255,255,0.1)'
   },
-  bubbleTimestamp: {
+  bubbleInternalTime: {
     fontSize: '9px',
-    color: 'rgba(255,255,255,0.35)',
+    color: 'rgba(255, 255, 255, 0.3)',
     textAlign: 'right',
-    marginTop: '5px'
+    marginTop: '6px'
   },
-  thumbnailContextBar: {
-    padding: '10px 20px',
-    backgroundColor: '#1f2c34',
+  contextBufferBar: {
+    padding: '12px 24px',
+    backgroundColor: '#131f37',
     display: 'flex',
     alignItems: 'center',
-    gap: '15px',
-    borderTop: '1px solid rgba(255,255,255,0.06)'
+    gap: '16px',
+    borderTop: '1px solid rgba(255, 255, 255, 0.05)'
   },
-  contextThumbImg: {
-    width: '45px',
-    height: '45px',
+  bufferThumbnailImage: {
+    width: '46px',
+    height: '46px',
     objectFit: 'cover',
-    borderRadius: '4px',
+    borderRadius: '6px',
     border: '1px solid #bc13fe'
   },
-  purgeContextBtn: {
+  purgeContextButton: {
     backgroundColor: 'transparent',
     border: 'none',
-    color: '#ea0038',
+    color: '#ff3b30',
     cursor: 'pointer',
-    fontSize: '12.5px'
+    fontSize: '13px',
+    fontWeight: '500'
   },
-  terminalInputDock: {
-    padding: '14px 20px',
-    backgroundColor: '#202c33',
+  dockUserInteractionConsole: {
+    padding: '16px 24px',
+    backgroundColor: '#131f37',
     display: 'flex',
     alignItems: 'center',
-    gap: '12px',
-    borderTop: '1px solid rgba(255,255,255,0.06)'
+    gap: '14px',
+    borderTop: '1px solid rgba(255, 255, 255, 0.05)'
   },
-  fileLabelBtn: {
-    backgroundColor: 'rgba(255,255,255,0.06)',
-    border: '1px solid rgba(255,255,255,0.1)',
+  mediaAttachButtonTrigger: {
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
     color: '#ffffff',
-    padding: '12px 16px',
+    padding: '12px 18px',
     borderRadius: '8px',
     cursor: 'pointer',
     fontSize: '13.5px',
     fontWeight: '600'
   },
-  terminalMainInputField: {
+  terminalTextEntryField: {
     flex: 1,
-    padding: '12px 16px',
+    padding: '13px 18px',
     borderRadius: '8px',
     border: 'none',
-    backgroundColor: '#2a3942',
+    backgroundColor: '#1c2a45',
     color: '#ffffff',
     outline: 'none',
     fontSize: '14.5px'
   },
-  terminalSendBtn: {
+  terminalTransmitButton: {
     backgroundColor: '#bc13fe',
     color: '#ffffff',
     border: 'none',
-    padding: '12px 20px',
+    padding: '13px 24px',
     borderRadius: '8px',
-    fontWeight: 'bold',
+    fontWeight: '700',
     cursor: 'pointer',
     fontSize: '14px',
-    boxShadow: '0 2px 10px rgba(188, 19, 254, 0.3)'
+    boxShadow: '0 4px 12px rgba(188, 19, 254, 0.3)'
   },
-  siteFooter: {
+  mainframeFooter: {
     width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '10px',
-    padding: '15px 15px 30px'
-  },
-  footerBrandLogoAsset: {
-    height: '26px',
-    width: 'auto',
-    objectFit: 'contain'
-  },
-  footerTextBlock: {
-    display: 'flex',
-    flexDirection: 'column',
-    textAlign: 'left',
-    fontSize: '9px',
-    color: '#ffffff',
-    opacity: 0.4,
-    lineHeight: '1.4'
+    textAlign: 'center',
+    padding: '20px',
+    fontSize: '11px',
+    color: 'rgba(255, 255, 255, 0.25)',
+    backgroundColor: 'rgba(6, 11, 25, 0.6)',
+    borderTop: '1px solid rgba(255, 255, 255, 0.03)',
+    letterSpacing: '0.5px'
   }
 };
-            
+        
