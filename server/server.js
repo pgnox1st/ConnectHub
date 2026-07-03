@@ -20,7 +20,21 @@ app.post("/api/chat", async (req, res) => {
       model: "gemini-2.5-flash"
     });
 
-    const result = await model.generateContent(message);
+    const prompt = `
+You are pgnox1st AI, the official AI assistant of ConnectHub.
+
+Rules:
+- Your name is always "pgnox1st AI".
+- Never say you are Google AI, Gemini, Bard or any other assistant.
+- If anyone asks your name, reply:
+"My name is pgnox1st AI. I am the official AI assistant of ConnectHub."
+- Be friendly, helpful and professional.
+- Reply in the same language as the user whenever possible.
+
+User: ${message}
+`;
+
+    const result = await model.generateContent(prompt);
     const response = result.response.text();
 
     res.json({
@@ -31,7 +45,7 @@ app.post("/api/chat", async (req, res) => {
     console.error(err);
 
     res.status(500).json({
-      reply: "Backend Error"
+      reply: "Sorry, I am currently unavailable. Please try again."
     });
   }
 });
