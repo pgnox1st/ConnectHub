@@ -1,29 +1,52 @@
-import axios from 'axios';
+import axios from "axios";
 
-// Base URL points to our backend server port 5000
-const API_URL = 'http://localhost:5000/api';
+// Render Backend URL
+const API_URL = "https://connecthub-ai.onrender.com/api";
 
-const API = axios.create({ baseURL: API_URL });
+const API = axios.create({
+  baseURL: API_URL,
+});
 
-// Automatically attach JWT token to every request if user is logged in
+// Automatically attach JWT token
 API.interceptors.request.use((req) => {
-  const profile = localStorage.getItem('profile');
+  const profile = localStorage.getItem("profile");
+
   if (profile) {
     const { token } = JSON.parse(profile);
     req.headers.Authorization = `Bearer ${token}`;
   }
+
   return req;
 });
 
-// 1. Auth API Endpoints
-export const signIn = (formData) => API.post('/auth/login', formData);
-export const signUp = (formData) => API.post('/auth/register', formData);
+// ================= AUTH =================
 
-// 2. Chat & User API Endpoints (For upcoming features)
-export const fetchChats = () => API.get('/chats');
-export const createChat = (userId) => API.post('/chats', { userId });
-export const fetchMessages = (chatId) => API.get(`/messages/${chatId}`);
-export const sendMessage = (messageData) => API.post('/messages', messageData);
-export const searchUsers = (searchQuery) => API.get(`/users?search=${searchQuery}`);
+export const signIn = (formData) =>
+  API.post("/auth/login", formData);
+
+export const signUp = (formData) =>
+  API.post("/auth/register", formData);
+
+// ================= CHAT =================
+
+export const fetchChats = () =>
+  API.get("/chats");
+
+export const createChat = (userId) =>
+  API.post("/chats", { userId });
+
+export const fetchMessages = (chatId) =>
+  API.get(`/messages/${chatId}`);
+
+export const sendMessage = (messageData) =>
+  API.post("/messages", messageData);
+
+export const searchUsers = (searchQuery) =>
+  API.get(`/users?search=${searchQuery}`);
+
+// ================= AI CHAT =================
+
+export const askAI = (message) =>
+  API.post("/chat", { message });
 
 export default API;
