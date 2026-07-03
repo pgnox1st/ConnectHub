@@ -6,10 +6,14 @@ import OpenAI from 'openai';
 dotenv.config();
 
 const app = express();
-app.use(cors({ origin: "*" }));
+
+// यहाँ CORS को सुरक्षित तरीके से सेट करें
+app.use(cors({
+  origin: "https://connect-hub-silk.vercel.app" // सिर्फ आपकी वेबसाइट को अनुमति दें
+}));
+
 app.use(express.json({ limit: '50mb' }));
 
-// Initialize OpenAI with the API Key from environment variables
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY, 
 });
@@ -18,7 +22,6 @@ app.post('/api/chat', async (req, res) => {
     try {
         const { message } = req.body;
         
-        // Using gpt-4o-mini, which is fast and efficient
         const completion = await openai.chat.completions.create({
             model: "gpt-4o-mini",
             messages: [{ role: "user", content: message }],
