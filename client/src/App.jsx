@@ -44,8 +44,8 @@ const App = () => {
     setIsNexusProcessing(true);
 
     try {
-      // Connects to your live Render Web Service
-      const networkResponse = await fetch('https://connecthub-live-isjm.onrender.com/api/chat', { 
+      // यहाँ आपका नया बैकएंड URL अपडेट कर दिया गया है
+      const networkResponse = await fetch('https://connecthub-backend-ydqo.onrender.com/api/chat', { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -134,4 +134,4 @@ const App = () => {
 };
 
 export default App;
-          
+        
