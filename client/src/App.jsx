@@ -1,43 +1,68 @@
 import React from "react";
 import "./styles/global.css";
+import ChatHeader from "./components/ChatHeader";
 
 function App() {
   return (
     <div className="app">
 
-      <header className="header">
-        <div className="logo">
-          🤖 pgnox1st AI
-          <span className="live">LIVE</span>
-        </div>
-      </header>
+      <ChatHeader />
 
       <main className="chat">
 
         <div className="ai">
-          <div className="avatar">AI</div>
+
+          <div className="avatar">
+            🤖
+          </div>
 
           <div className="bubble">
-            Welcome to ConnectHub AI v2.5.
-            <br /><br />
-            Ask me anything.
+
+            <h2>Welcome to pgnox1st AI</h2>
+
+            <br />
+
+            <p>
+              Hello 👋
+            </p>
+
+            <br />
+
+            <p>
+              I am <b>pgnox1st AI v2.5</b>, the official AI assistant of
+              ConnectHub.
+            </p>
+
+            <br />
+
+            <p>
+              Ask me anything...
+            </p>
+
           </div>
+
         </div>
 
       </main>
 
       <footer className="inputBox">
 
-        <button>📎</button>
+        <button title="Attach File">
+          📎
+        </button>
 
         <input
           type="text"
           placeholder="Message pgnox1st AI..."
         />
 
-        <button>🎤</button>
+        <button title="Voice">
+          🎤
+        </button>
 
-        <button>➤</button>
+        <button title="Send">
+          ➤
+        </button>
 
       </footer>
 
