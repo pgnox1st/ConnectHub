@@ -11,17 +11,17 @@ import { askAI } from "./services/api";
 function App() {
   const [messages, setMessages] = useState([]);
 
-  const sendMessage = async (text) => {
-    if (!text.trim()) return;
-
-    // User Message
+  const sendMessage = async ({ text, image }) => {
     const userMessage = {
       id: Date.now(),
       text,
+      image,
       sender: "me",
     };
 
     setMessages((prev) => [...prev, userMessage]);
+
+    if (!text.trim()) return;
 
     try {
       const res = await askAI(text);
@@ -33,15 +33,15 @@ function App() {
       };
 
       setMessages((prev) => [...prev, aiMessage]);
-
-    } catch (error) {
-      const errorMessage = {
-        id: Date.now() + 2,
-        text: "❌ AI Server Error",
-        sender: "ai",
-      };
-
-      setMessages((prev) => [...prev, errorMessage]);
+    } catch (err) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 2,
+          text: "❌ AI Server Error",
+          sender: "ai",
+        },
+      ]);
     }
   };
 
