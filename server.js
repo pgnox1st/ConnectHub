@@ -14,32 +14,27 @@ app.use(express.json({ limit: "50mb" }));
 // Gemini setup
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// API ROUTE
+// Chat API
 app.post("/api/chat", async (req, res) => {
   try {
     const { message, imageBuffer, mimeType } = req.body;
 
-    // validation
     if (!message && !imageBuffer) {
       return res.status(400).json({
-        reply: "Message required",
+        reply: "Message is required",
       });
     }
 
-    // model
     const model = genAI.getGenerativeModel({
       model: "gemini-1.5-flash",
     });
 
-    // content builder
     const contentParts = [];
 
-    // text
     if (message) {
       contentParts.push(message);
     }
 
-    // image
     if (imageBuffer && mimeType) {
       contentParts.push({
         inlineData: {
@@ -49,7 +44,6 @@ app.post("/api/chat", async (req, res) => {
       });
     }
 
-    // generate response
     const result = await model.generateContent(contentParts);
     const response = await result.response.text();
 
@@ -58,24 +52,23 @@ app.post("/api/chat", async (req, res) => {
     });
 
   } catch (error) {
-    console.error("GEMINI ERROR:", error);
+    console.error("Gemini Error:", error);
 
-    // 🔴 RATE LIMIT ERROR (429)
     if (error?.status === 429) {
       return res.status(429).json({
-        reply: "AI limit खत्म हो गया है. थोड़ी देर बाद try करो.",
+        reply: "AI rate limit exceeded. Please try again later.",
       });
     }
 
-    // 🔴 GENERAL ERROR
     return res.status(500).json({
-      reply: "Server error. API key या server check करो.",
+      reply: "Internal server error. Please check API key or server.",
     });
   }
 });
 
-// start server
+// Server start
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
-  console.log(`🚀 AI Backend running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
