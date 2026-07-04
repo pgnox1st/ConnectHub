@@ -10,6 +10,7 @@ import { askAI } from "./services/api";
 
 function App() {
   const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const sendMessage = async ({ text, image }) => {
     const userMessage = {
@@ -23,6 +24,8 @@ function App() {
 
     if (!text.trim()) return;
 
+    setLoading(true);
+
     try {
       const res = await askAI(text);
 
@@ -33,7 +36,9 @@ function App() {
       };
 
       setMessages((prev) => [...prev, aiMessage]);
+
     } catch (err) {
+
       setMessages((prev) => [
         ...prev,
         {
@@ -42,19 +47,27 @@ function App() {
           sender: "ai",
         },
       ]);
+
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="app">
+
       <ChatHeader />
 
       <div className="main-layout">
         <Sidebar />
-        <ChatArea messages={messages} />
+        <ChatArea
+          messages={messages}
+          loading={loading}
+        />
       </div>
 
       <MessageInput sendMessage={sendMessage} />
+
     </div>
   );
 }
