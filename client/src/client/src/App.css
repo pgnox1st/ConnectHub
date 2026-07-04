@@ -1,0 +1,196 @@
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+  background:#070B18;
+  color:#fff;
+}
+
+.app{
+  max-width:430px;
+  margin:auto;
+  min-height:100vh;
+  background:#090E1D;
+  padding:18px;
+  padding-bottom:100px;
+}
+
+.menuButton{
+  font-size:28px;
+  cursor:pointer;
+  margin-bottom:15px;
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.header h1{
+  font-size:28px;
+}
+
+.header p{
+  color:#a8a8a8;
+  margin-top:5px;
+}
+
+.headerRight{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.proBtn{
+  background:#6E3BFF;
+  color:white;
+  border:none;
+  padding:10px 20px;
+  border-radius:30px;
+  cursor:pointer;
+}
+
+.avatar{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+}
+
+.welcome{
+  margin-top:35px;
+}
+
+.welcome h2{
+  font-size:38px;
+}
+
+.welcome span{
+  color:#8D5BFF;
+}
+
+.welcome p{
+  margin-top:10px;
+  color:#bbbbbb;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:16px;
+  margin-top:30px;
+}
+
+.card{
+  background:#121A2E;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:22px;
+  padding:22px;
+  transition:.3s;
+}
+
+.card:hover{
+  transform:translateY(-5px);
+  border-color:#7D4BFF;
+}
+
+.icon{
+  font-size:38px;
+  margin-bottom:15px;
+}
+
+.card h3{
+  margin-bottom:10px;
+}
+
+.card p{
+  color:#9f9f9f;
+}
+
+.chat{
+  margin-top:35px;
+}
+
+.aiMessage{
+  background:#161F35;
+  padding:18px;
+  border-radius:20px;
+  margin-bottom:18px;
+  line-height:1.7;
+}
+
+.userMessage{
+  background:linear-gradient(90deg,#5D32FF,#8B42FF);
+  padding:18px;
+  border-radius:20px;
+  margin-bottom:18px;
+  text-align:right;
+}
+
+.inputArea{
+  position:fixed;
+  bottom:80px;
+  left:50%;
+  transform:translateX(-50%);
+  width:420px;
+  background:#141B2C;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  border-radius:35px;
+}
+
+.inputArea input{
+  flex:1;
+  background:transparent;
+  border:none;
+  color:white;
+  outline:none;
+  font-size:16px;
+}
+
+.inputArea button{
+  width:42px;
+  height:42px;
+  border:none;
+  border-radius:50%;
+  cursor:pointer;
+}
+
+.sendBtn{
+  background:#6F3EFF;
+  color:white;
+}
+
+.bottomNav{
+  position:fixed;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:430px;
+  height:75px;
+  background:#101726;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+}
+
+.bottomNav button{
+  background:none;
+  border:none;
+  color:white;
+  cursor:pointer;
+}
+
+.centerButton{
+  width:65px;
+  height:65px;
+  border-radius:50%;
+  background:#6F3EFF!important;
+  font-size:28px;
+  }
