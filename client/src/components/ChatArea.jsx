@@ -1,6 +1,15 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 function ChatArea({ messages }) {
+
+  const bottomRef = useRef(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({
+      behavior: "smooth"
+    });
+  }, [messages]);
+
   return (
     <main className="chat">
 
@@ -12,29 +21,42 @@ function ChatArea({ messages }) {
 
           <p>Hello 👋</p>
 
-          <p>I am pgnox1st AI.</p>
+          <p>I am <strong>pgnox1st AI</strong>.</p>
 
-          <p>Start chatting below.</p>
+          <p>How can I help you today?</p>
         </div>
       </div>
 
       {messages.map((msg) => (
+
         <div
           key={msg.id}
-          className="ai"
-          style={{ justifyContent: "flex-end" }}
+          className={msg.sender === "me" ? "user-message" : "ai"}
         >
+
+          {msg.sender === "ai" && (
+            <div className="avatar">🤖</div>
+          )}
+
           <div
             className="bubble"
             style={{
-              background: "#10a37f",
-              color: "#fff"
+              background:
+                msg.sender === "me"
+                  ? "#10a37f"
+                  : "#202123",
+
+              color: "#ffffff"
             }}
           >
             {msg.text}
           </div>
+
         </div>
+
       ))}
+
+      <div ref={bottomRef}></div>
 
     </main>
   );
