@@ -1,4 +1,5 @@
 import "./App.css";
+import FeatureCards from "./components/FeatureCards";
 
 function App() {
   return (
@@ -26,7 +27,7 @@ function App() {
           <img
             className="avatar"
             src="https://i.pravatar.cc/100"
-            alt="profile"
+            alt="Profile"
           />
 
         </div>
@@ -46,43 +47,17 @@ function App() {
 
       </div>
 
-      {/* Cards */}
+      {/* Premium Feature Cards */}
 
-      <div className="cards">
-
-        <div className="card">
-          <div className="icon">💬</div>
-          <h3>AI Chat</h3>
-          <p>Smart conversations</p>
-        </div>
-
-        <div className="card">
-          <div className="icon">🔍</div>
-          <h3>AI Search</h3>
-          <p>Find answers instantly</p>
-        </div>
-
-        <div className="card">
-          <div className="icon">🖼️</div>
-          <h3>AI Image</h3>
-          <p>Create amazing images</p>
-        </div>
-
-        <div className="card">
-          <div className="icon">✍️</div>
-          <h3>AI Write</h3>
-          <p>Write anything</p>
-        </div>
-
-      </div>
+      <FeatureCards />
 
       {/* Chat */}
 
       <div className="chat">
 
         <div className="aiMessage">
-          Hello 👋<br />
-          Welcome to ConnectHub AI.
+          👋 Hello! I am <b>ConnectHub AI</b>.<br />
+          How can I help you today?
         </div>
 
         <div className="userMessage">
@@ -90,22 +65,29 @@ function App() {
         </div>
 
         <div className="aiMessage">
-          Artificial Intelligence (AI) enables computers to perform tasks that normally require human intelligence such as understanding language, generating images, solving problems, and assisting users.
+          Artificial Intelligence (AI) enables computers to understand language,
+          analyze images, generate content, answer questions and assist people
+          intelligently.
         </div>
 
       </div>
 
-      {/* Input */}
+      {/* Chat Input */}
 
       <div className="inputArea">
 
         <input
+          type="text"
           placeholder="Ask anything..."
         />
 
-        <button>🖼️</button>
+        <button title="Image">
+          🖼️
+        </button>
 
-        <button>🎤</button>
+        <button title="Voice">
+          🎤
+        </button>
 
         <button className="sendBtn">
           ➤
@@ -117,17 +99,33 @@ function App() {
 
       <nav className="bottomNav">
 
-        <button>💬<br />Chat</button>
+        <button>
+          💬
+          <br />
+          Chat
+        </button>
 
-        <button>🕘<br />History</button>
+        <button>
+          🕘
+          <br />
+          History
+        </button>
 
         <button className="centerButton">
           ✨
         </button>
 
-        <button>🧰<br />Tools</button>
+        <button>
+          🧰
+          <br />
+          Tools
+        </button>
 
-        <button>⚙️<br />Settings</button>
+        <button>
+          ⚙️
+          <br />
+          Settings
+        </button>
 
       </nav>
 
