@@ -17,7 +17,7 @@ app.post("/api/chat", async (req, res) => {
     const { message } = req.body;
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash"
+      model: "gemini-2.5-flash",
     });
 
     const prompt = `
@@ -38,24 +38,26 @@ User: ${message}
     const response = result.response.text();
 
     res.json({
-      reply: response
+      reply: response,
     });
 
   } catch (err) {
+    console.error("========== GEMINI ERROR ==========");
     console.error(err);
+    console.error("==================================");
 
     res.status(500).json({
-      reply: "Sorry, I am currently unavailable. Please try again."
+      reply: err.message || "Unknown Server Error",
     });
   }
 });
 
 app.get("/", (req, res) => {
-  res.send("ConnectHub Backend Running");
+  res.send("✅ ConnectHub Backend Running");
 });
 
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`✅ Server running on port ${PORT}`);
 });
