@@ -2,13 +2,20 @@ import React, { useState, useRef } from "react";
 
 function MessageInput({ sendMessage }) {
   const [text, setText] = useState("");
+  const [preview, setPreview] = useState(null);
+
   const fileInputRef = useRef(null);
 
   const handleSend = () => {
-    if (!text.trim()) return;
+    if (!text.trim() && !preview) return;
 
-    sendMessage(text);
+    sendMessage({
+      text,
+      image: preview,
+    });
+
     setText("");
+    setPreview(null);
   };
 
   const handleFileClick = () => {
@@ -20,55 +27,64 @@ function MessageInput({ sendMessage }) {
 
     if (!file) return;
 
-    alert(`Selected: ${file.name}`);
-
-    // अगले स्टेप में यहीं से Image Upload करेंगे
+    setPreview(URL.createObjectURL(file));
   };
 
   return (
-    <footer className="inputBox">
+    <>
+      {preview && (
+        <div
+          style={{
+            padding: "10px",
+            background: "#161b22",
+            textAlign: "center",
+          }}
+        >
+          <img
+            src={preview}
+            alt="Preview"
+            style={{
+              width: "120px",
+              borderRadius: "10px",
+            }}
+          />
+        </div>
+      )}
 
-      <button
-        type="button"
-        title="Attach File"
-        onClick={handleFileClick}
-      >
-        📎
-      </button>
+      <footer className="inputBox">
 
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        style={{ display: "none" }}
-        onChange={handleFileChange}
-      />
+        <button onClick={handleFileClick}>
+          📎
+        </button>
 
-      <input
-        type="text"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            handleSend();
-          }
-        }}
-        placeholder="Message pgnox1st AI..."
-      />
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          style={{ display: "none" }}
+          onChange={handleFileChange}
+        />
 
-      <button type="button" title="Voice">
-        🎤
-      </button>
+        <input
+          type="text"
+          placeholder="Message pgnox1st AI..."
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleSend();
+          }}
+        />
 
-      <button
-        type="button"
-        title="Send"
-        onClick={handleSend}
-      >
-        ➤
-      </button>
+        <button>
+          🎤
+        </button>
 
-    </footer>
+        <button onClick={handleSend}>
+          ➤
+        </button>
+
+      </footer>
+    </>
   );
 }
 
