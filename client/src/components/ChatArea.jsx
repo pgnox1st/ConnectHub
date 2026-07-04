@@ -1,12 +1,11 @@
 import React, { useEffect, useRef } from "react";
 
 function ChatArea({ messages }) {
-
   const bottomRef = useRef(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({
-      behavior: "smooth"
+      behavior: "smooth",
     });
   }, [messages]);
 
@@ -18,11 +17,8 @@ function ChatArea({ messages }) {
 
         <div className="bubble">
           <h2>Welcome to ConnectHub AI</h2>
-
           <p>Hello 👋</p>
-
           <p>I am <strong>pgnox1st AI</strong>.</p>
-
           <p>How can I help you today?</p>
         </div>
       </div>
@@ -38,18 +34,22 @@ function ChatArea({ messages }) {
             <div className="avatar">🤖</div>
           )}
 
-          <div
-            className="bubble"
-            style={{
-              background:
-                msg.sender === "me"
-                  ? "#10a37f"
-                  : "#202123",
+          <div className="bubble">
 
-              color: "#ffffff"
-            }}
-          >
-            {msg.text}
+            {msg.image && (
+              <img
+                src={msg.image}
+                alt="Uploaded"
+                style={{
+                  width: "220px",
+                  borderRadius: "12px",
+                  marginBottom: "10px",
+                }}
+              />
+            )}
+
+            {msg.text && <p>{msg.text}</p>}
+
           </div>
 
         </div>
