@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 function MessageInput({ sendMessage }) {
-
   const [text, setText] = useState("");
+  const fileInputRef = useRef(null);
 
   const handleSend = () => {
     if (!text.trim()) return;
@@ -11,12 +11,38 @@ function MessageInput({ sendMessage }) {
     setText("");
   };
 
+  const handleFileClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    alert(`Selected: ${file.name}`);
+
+    // अगले स्टेप में यहीं से Image Upload करेंगे
+  };
+
   return (
     <footer className="inputBox">
 
-      <button title="Attach File">
+      <button
+        type="button"
+        title="Attach File"
+        onClick={handleFileClick}
+      >
         📎
       </button>
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+      />
 
       <input
         type="text"
@@ -30,11 +56,12 @@ function MessageInput({ sendMessage }) {
         placeholder="Message pgnox1st AI..."
       />
 
-      <button title="Voice">
+      <button type="button" title="Voice">
         🎤
       </button>
 
       <button
+        type="button"
         title="Send"
         onClick={handleSend}
       >
