@@ -2,9 +2,14 @@ import React from "react";
 
 function Sidebar() {
   return (
-    <div className="sidebar">
+    <aside className="sidebar">
 
       <div className="sidebar-top">
+
+        <div className="logo">
+          <h2>🤖 ConnectHub AI</h2>
+          <p>pgnox1st AI v2.5</p>
+        </div>
 
         <button className="new-chat">
           ➕ New Chat
@@ -14,6 +19,8 @@ function Sidebar() {
 
           <button>💬 Chats</button>
 
+          <button>🕘 History</button>
+
           <button>🖼 Images</button>
 
           <button>📁 Files</button>
@@ -21,8 +28,6 @@ function Sidebar() {
           <button>🎤 Voice</button>
 
           <button>⭐ Favorites</button>
-
-          <button>🕘 History</button>
 
         </div>
 
@@ -34,9 +39,11 @@ function Sidebar() {
 
         <button>⚙️ Settings</button>
 
+        <button>🌙 Dark Mode</button>
+
       </div>
 
-    </div>
+    </aside>
   );
 }
 
