@@ -1,16 +1,69 @@
+import { useState } from "react";
 import "./App.css";
 import FeatureCards from "./components/FeatureCards";
 
 function App() {
+  const [message, setMessage] = useState("");
+
+  const [messages, setMessages] = useState([
+    {
+      sender: "ai",
+      text: "👋 Hello! I am ConnectHub AI. How can I help you today?",
+    },
+  ]);
+
+  const sendMessage = async () => {
+    if (!message.trim()) return;
+
+    const userMessage = {
+      sender: "user",
+      text: message,
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+
+    const currentMessage = message;
+    setMessage("");
+
+    try {
+      const res = await fetch(
+        "https://connecthub-backend-ydqo.onrender.com/api/chat",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: currentMessage,
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "ai",
+          text: data.reply,
+        },
+      ]);
+    } catch (err) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "ai",
+          text: "❌ Server connection failed.",
+        },
+      ]);
+    }
+  };
+
   return (
     <div className="app">
 
-      {/* Sidebar Button */}
-      <div className="menuButton">
-        ☰
-      </div>
+      <div className="menuButton">☰</div>
 
-      {/* Header */}
       <header className="header">
 
         <div>
@@ -34,51 +87,45 @@ function App() {
 
       </header>
 
-      {/* Welcome */}
-
       <div className="welcome">
-
         <h2>
-          Hello,
-          <span> User 👋</span>
+          Hello, <span>User 👋</span>
         </h2>
 
         <p>How can I help you today?</p>
-
       </div>
-
-      {/* Premium Feature Cards */}
 
       <FeatureCards />
 
-      {/* Chat */}
-
       <div className="chat">
 
-        <div className="aiMessage">
-          👋 Hello! I am <b>ConnectHub AI</b>.<br />
-          How can I help you today?
-        </div>
-
-        <div className="userMessage">
-          Explain Artificial Intelligence.
-        </div>
-
-        <div className="aiMessage">
-          Artificial Intelligence (AI) enables computers to understand language,
-          analyze images, generate content, answer questions and assist people
-          intelligently.
-        </div>
+        {messages.map((msg, index) => (
+          <div
+            key={index}
+            className={
+              msg.sender === "user"
+                ? "userMessage"
+                : "aiMessage"
+            }
+          >
+            {msg.text}
+          </div>
+        ))}
 
       </div>
-
-      {/* Chat Input */}
 
       <div className="inputArea">
 
         <input
           type="text"
           placeholder="Ask anything..."
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              sendMessage();
+            }
+          }}
         />
 
         <button title="Image">
@@ -89,13 +136,14 @@ function App() {
           🎤
         </button>
 
-        <button className="sendBtn">
+        <button
+          className="sendBtn"
+          onClick={sendMessage}
+        >
           ➤
         </button>
 
       </div>
-
-      {/* Bottom Navigation */}
 
       <nav className="bottomNav">
 
