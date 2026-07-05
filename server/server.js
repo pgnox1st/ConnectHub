@@ -41,13 +41,22 @@ User: ${message}
       reply: response,
     });
 
-  } catch (err) {
+  } catch (error) {
+
     console.error("========== GEMINI ERROR ==========");
-    console.error(err);
+    console.error(error);
     console.error("==================================");
 
-    res.status(500).json({
-      reply: err.message || "Unknown Server Error",
+    let reply =
+      "⚠️ AI is temporarily unavailable. Please try again in a few minutes.";
+
+    if (error.status === 429) {
+      reply =
+        "⚠️ Daily AI limit has been reached. Please try again later.";
+    }
+
+    res.status(200).json({
+      reply,
     });
   }
 });
