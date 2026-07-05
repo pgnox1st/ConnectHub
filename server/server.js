@@ -16,6 +16,15 @@ const API_KEYS = [
   process.env.GEMINI_API_KEY_3,
 ];
 
+// ================= DEBUG =================
+console.log("========== API KEY STATUS ==========");
+console.log("Key 1 Loaded:", !!process.env.GEMINI_API_KEY);
+console.log("Key 2 Loaded:", !!process.env.GEMINI_API_KEY_2);
+console.log("Key 3 Loaded:", !!process.env.GEMINI_API_KEY_3);
+console.log("Total Keys:", API_KEYS.filter(Boolean).length);
+console.log("====================================");
+// =========================================
+
 app.post("/api/chat", async (req, res) => {
   const { message } = req.body;
 
@@ -32,10 +41,14 @@ User: ${message}
 
   let lastError = null;
 
-  for (const key of API_KEYS) {
+  for (let i = 0; i < API_KEYS.length; i++) {
+    const key = API_KEYS[i];
+
     if (!key) continue;
 
     try {
+      console.log(`Trying API Key ${i + 1}...`);
+
       const genAI = new GoogleGenerativeAI(key);
 
       const model = genAI.getGenerativeModel({
@@ -44,6 +57,8 @@ User: ${message}
 
       const result = await model.generateContent(prompt);
 
+      console.log(`✅ API Key ${i + 1} Success`);
+
       return res.json({
         reply: result.response.text(),
       });
@@ -51,16 +66,21 @@ User: ${message}
     } catch (error) {
       lastError = error;
 
+      console.error(`❌ API Key ${i + 1} Failed`);
+
       if (error.status === 429) {
-        console.log("Key limit reached. Trying next key...");
+        console.log(`⚠️ API Key ${i + 1} quota exceeded. Trying next key...`);
         continue;
       }
 
+      console.error(error);
       break;
     }
   }
 
+  console.error("========== FINAL ERROR ==========");
   console.error(lastError);
+  console.error("=================================");
 
   return res.json({
     reply:
