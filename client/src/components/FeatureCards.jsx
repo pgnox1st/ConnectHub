@@ -15,22 +15,22 @@ import {
 
 const features = [
   {
-    icon: <MdOutlineChatBubbleOutline size={28} />,
+    icon: <MdOutlineChatBubbleOutline size={22} />,
     title: "AI Chat",
     desc: "Smart conversations",
   },
   {
-    icon: <MdImageSearch size={28} />,
+    icon: <MdImageSearch size={22} />,
     title: "AI Search",
-    desc: "Find anything instantly",
+    desc: "Find answers instantly",
   },
   {
-    icon: <BsStars size={28} />,
+    icon: <BsStars size={22} />,
     title: "AI Image",
     desc: "Generate amazing images",
   },
   {
-    icon: <FiEdit3 size={28} />,
+    icon: <FiEdit3 size={22} />,
     title: "AI Writer",
     desc: "Write anything with AI",
   },
@@ -38,9 +38,12 @@ const features = [
 
 export default function FeatureCards() {
   return (
-    <div className="feature-grid">
+    <section className="feature-grid">
+
       {features.map((item, index) => (
+
         <div className="feature-card" key={index}>
+
           <div className="feature-icon">
             {item.icon}
           </div>
@@ -48,8 +51,11 @@ export default function FeatureCards() {
           <h3>{item.title}</h3>
 
           <p>{item.desc}</p>
+
         </div>
+
       ))}
-    </div>
+
+    </section>
   );
-            }
+}
