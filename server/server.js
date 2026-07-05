@@ -19,86 +19,94 @@ const API_KEYS = [
 
 // ================= DEBUG =================
 console.log("========== API KEY STATUS ==========");
+console.log("Total Keys Loaded:", API_KEYS.length);
 API_KEYS.forEach((k, i) => {
   console.log(`Key ${i + 1}:`, !!k);
 });
-console.log("Total Valid Keys:", API_KEYS.length);
 console.log("====================================");
+
+// ================= TEST ROUTE =================
+app.get("/", (req, res) => {
+  res.send("✅ ConnectHub Backend Running");
+});
 
 // ================= CHAT API =================
 app.post("/api/chat", async (req, res) => {
-  const { message } = req.body;
+  try {
+    const { message } = req.body;
 
-  if (!message) {
-    return res.status(400).json({
-      reply: "Message is required",
-    });
-  }
+    if (!message) {
+      return res.status(400).json({
+        reply: "Message is required",
+      });
+    }
 
-  const prompt = `
+    const prompt = `
 You are pgnox1st AI, the official AI assistant of ConnectHub.
 
 Rules:
-- Your name is always "pgnox1st AI"
-- Never say you are Google, Gemini, or Bard
+- Your name is "pgnox1st AI"
+- Never say Google, Gemini, or Bard
 - Reply naturally in user's language
 
 User: ${message}
 `;
 
-  let lastError = null;
+    let lastError = null;
 
-  for (let i = 0; i < API_KEYS.length; i++) {
-    try {
-      console.log(`🚀 Trying API Key ${i + 1}`);
+    for (let i = 0; i < API_KEYS.length; i++) {
+      try {
+        console.log(`🚀 Trying API Key ${i + 1}`);
 
-      const genAI = new GoogleGenerativeAI(API_KEYS[i]);
+        const genAI = new GoogleGenerativeAI(API_KEYS[i]);
 
-      const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-pro",
-      });
+        const model = genAI.getGenerativeModel({
+          model: "gemini-1.5-flash",
+        });
 
-      const result = await model.generateContent(prompt);
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = await response.text();
 
-      const response = await result.response;
-      const text = await response.text();
+        console.log(`✅ Success with API Key ${i + 1}`);
 
-      console.log(`✅ Success with API Key ${i + 1}`);
+        return res.json({
+          reply: text,
+        });
 
-      return res.json({
-        reply: text,
-      });
+      } catch (error) {
+        lastError = error;
 
-    } catch (error) {
-      lastError = error;
+        const status = error?.status || error?.response?.status;
 
-      const status = error?.status || error?.response?.status;
+        console.log(`❌ API Key ${i + 1} failed`);
 
-      console.log(`❌ API Key ${i + 1} failed`);
+        // quota or auth issue → try next key
+        if (status === 429 || status === 403) {
+          console.log(`⚠️ Switching to next API key...`);
+          continue;
+        }
 
-      // quota/auth issue → try next key
-      if (status === 429 || status === 403) {
-        console.log(`⚠️ Switching to next API key...`);
-        continue;
+        console.error("❌ Critical Error:", error);
+        break;
       }
-
-      console.error("❌ Critical Error:", error);
-      break;
     }
+
+    console.error("========== FINAL ERROR ==========");
+    console.error(lastError);
+    console.error("=================================");
+
+    return res.status(500).json({
+      reply: "⚠️ AI temporarily unavailable. Please try again later.",
+    });
+
+  } catch (err) {
+    console.error("Server Crash:", err);
+
+    return res.status(500).json({
+      reply: "Server error occurred",
+    });
   }
-
-  console.error("========== FINAL ERROR ==========");
-  console.error(lastError);
-  console.error("=================================");
-
-  return res.status(500).json({
-    reply: "⚠️ All AI API keys are exhausted or invalid. Please try later.",
-  });
-});
-
-// ================= HOME ROUTE =================
-app.get("/", (req, res) => {
-  res.send("✅ ConnectHub Backend Running");
 });
 
 // ================= START SERVER =================
