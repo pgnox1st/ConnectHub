@@ -1,38 +1,36 @@
 .feature-grid{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:18px;
-margin-top:30px;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+  margin:20px 0;
 }
 
 .feature-card{
-background:#121B30;
-border:1px solid rgba(255,255,255,.08);
-border-radius:22px;
-padding:22px;
-cursor:pointer;
-transition:.3s;
+  background:#151d33;
+  border-radius:20px;
+  padding:18px;
+  text-align:center;
+  border:1px solid rgba(255,255,255,.05);
+  transition:.3s;
 }
 
 .feature-card:hover{
-transform:translateY(-6px);
-border-color:#7B4DFF;
-box-shadow:0 0 25px rgba(123,77,255,.3);
+  transform:translateY(-4px);
+  border-color:#7c3aed;
 }
 
 .feature-icon{
-font-size:40px;
-margin-bottom:15px;
+  color:#9f67ff;
+  margin-bottom:12px;
 }
 
 .feature-card h3{
-font-size:20px;
-margin-bottom:8px;
-color:white;
+  color:white;
+  font-size:17px;
+  margin-bottom:8px;
 }
 
 .feature-card p{
-font-size:14px;
-color:#B5B5B5;
-line-height:1.6;
+  color:#9ca3af;
+  font-size:13px;
 }
