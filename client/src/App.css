@@ -1,8 +1,13 @@
+/* ===========================
+   ConnectHub AI Premium UI
+   App.css
+=========================== */
+
 *{
   margin:0;
   padding:0;
   box-sizing:border-box;
-  font-family:Arial,sans-serif;
+  font-family:Arial,Helvetica,sans-serif;
 }
 
 body{
@@ -10,38 +15,60 @@ body{
   color:#fff;
 }
 
+/* MAIN */
+
 .app{
   width:100%;
   max-width:390px;
-  margin:auto;
   min-height:100vh;
+  margin:auto;
   background:#0b1120;
-  padding:12px;
+  padding:10px;
   padding-bottom:95px;
 }
 
+/* ===========================
+HEADER
+=========================== */
+
 .header{
   display:flex;
-  justify-content:space-between;
   align-items:center;
-  margin-bottom:12px;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+
+.logoArea{
+  flex:1;
 }
 
 .header h1{
-  font-size:22px;
+  font-size:21px;
+  font-weight:700;
 }
 
 .header p{
-  font-size:12px;
+  font-size:11px;
   color:#9ca3af;
+  margin-top:2px;
 }
 
 .menuButton{
-  background:none;
+  width:36px;
+  height:36px;
   border:none;
-  color:#fff;
-  font-size:20px;
+  border-radius:10px;
+  background:#161f36;
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
   cursor:pointer;
+}
+
+.menuButton svg{
+  font-size:18px;
 }
 
 .headerRight{
@@ -51,29 +78,40 @@ body{
 }
 
 .proBtn{
-  background:linear-gradient(135deg,#6F3EFF,#8B42FF);
-  color:#fff;
-  border:none;
-  border-radius:20px;
-  padding:6px 14px;
   display:flex;
-  gap:6px;
   align-items:center;
+  gap:5px;
+  padding:7px 14px;
+  border:none;
+  border-radius:22px;
+  background:linear-gradient(135deg,#6F3EFF,#8B42FF);
+  color:white;
+  cursor:pointer;
   font-size:13px;
 }
 
-.avatar{
-  width:38px;
-  height:38px;
-  border-radius:50%;
+.proBtn svg{
+  font-size:15px;
 }
 
+.avatar{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  object-fit:cover;
+}
+
+/* ===========================
+WELCOME
+=========================== */
+
 .welcome{
-  margin:12px 0;
+  margin:14px 0;
 }
 
 .welcome h2{
-  font-size:26px;
+  font-size:28px;
+  font-weight:700;
 }
 
 .welcome span{
@@ -81,56 +119,66 @@ body{
 }
 
 .welcome p{
-  color:#9ca3af;
-  font-size:14px;
   margin-top:4px;
+  font-size:14px;
+  color:#9ca3af;
 }
+
+/* ===========================
+FEATURE CARDS
+=========================== */
 
 .feature-grid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
   gap:10px;
-  margin:15px 0;
+  margin-bottom:14px;
 }
 
 .feature-card{
-  background:#131c33;
-  border-radius:16px;
-  padding:14px;
-  text-align:center;
+  background:#141d34;
+  border-radius:18px;
+  padding:16px;
   border:1px solid rgba(255,255,255,.05);
-  transition:.3s;
+  text-align:center;
+  transition:.25s;
 }
 
 .feature-card:hover{
-  transform:translateY(-3px);
+  transform:translateY(-2px);
   border-color:#7c3aed;
 }
 
 .feature-icon{
-  font-size:26px;
   color:#9b6cff;
+  font-size:24px;
   margin-bottom:8px;
 }
 
 .feature-card h3{
   font-size:15px;
-  margin-bottom:6px;
+  margin-bottom:5px;
 }
 
 .feature-card p{
   font-size:11px;
   color:#9ca3af;
+  line-height:1.4;
 }
 
+/* ===========================
+CHAT
+=========================== */
+
 .chat{
-  height:340px;
+  height:430px;
   overflow-y:auto;
   display:flex;
   flex-direction:column;
   gap:10px;
-  padding-right:5px;
-  margin-bottom:10px;
+  padding-right:3px;
+  margin-bottom:80px;
+  scroll-behavior:smooth;
 }
 
 .chat::-webkit-scrollbar{
@@ -139,13 +187,13 @@ body{
 
 .chat::-webkit-scrollbar-thumb{
   background:#6F3EFF;
-  border-radius:10px;
+  border-radius:20px;
 }
 
 .aiMessage{
-  background:#1b2340;
-  padding:10px 14px;
-  border-radius:14px;
+  background:#1a2340;
+  padding:12px 15px;
+  border-radius:16px;
   width:85%;
   font-size:14px;
   line-height:1.5;
@@ -153,38 +201,46 @@ body{
 
 .userMessage{
   background:#6F3EFF;
-  padding:10px 14px;
-  border-radius:14px;
-  align-self:flex-end;
+  padding:12px 15px;
+  border-radius:16px;
   width:85%;
+  align-self:flex-end;
   font-size:14px;
   line-height:1.5;
 }
 
+/* ===========================
+INPUT
+=========================== */
+
 .inputArea{
   position:fixed;
-  bottom:72px;
+  bottom:68px;
   left:50%;
   transform:translateX(-50%);
   width:390px;
   max-width:100%;
+  padding:8px;
+  background:#0b1120;
   display:flex;
   align-items:center;
   gap:8px;
-  padding:8px;
-  background:#0b1120;
 }
 
 .inputArea input{
   flex:1;
   height:44px;
-  background:#161f36;
-  color:#fff;
   border:none;
-  border-radius:25px;
-  padding:0 15px;
   outline:none;
+  border-radius:24px;
+  background:#161f36;
+  color:white;
+  padding:0 15px;
   font-size:14px;
+}
+
+.inputArea input::placeholder{
+  color:#8b93a7;
 }
 
 .inputArea button{
@@ -192,12 +248,20 @@ body{
   height:42px;
   border:none;
   border-radius:50%;
-  background:#222c49;
-  color:#fff;
+  background:#202947;
+  color:white;
   display:flex;
   justify-content:center;
   align-items:center;
   cursor:pointer;
+  transition:.25s;
+}
+
+.inputArea button:hover{
+  background:#2b365d;
+}
+
+.inputArea button svg{
   font-size:18px;
 }
 
@@ -205,39 +269,46 @@ body{
   background:#7c3aed!important;
 }
 
+/* ===========================
+BOTTOM NAVIGATION
+=========================== */
+
 .bottomNav{
   position:fixed;
-  bottom:0;
   left:50%;
+  bottom:0;
   transform:translateX(-50%);
   width:390px;
   max-width:100%;
-  height:65px;
+  height:66px;
   background:#101726;
+  border-top:1px solid rgba(255,255,255,.05);
   display:flex;
   justify-content:space-around;
   align-items:center;
-  border-top:1px solid rgba(255,255,255,.06);
 }
 
 .bottomNav button{
   background:none;
   border:none;
-  color:#a8a8a8;
+  color:#a4a8b6;
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:3px;
-  font-size:11px;
+  gap:2px;
   cursor:pointer;
 }
 
-.bottomNav button:hover{
-  color:#ffffff;
+.bottomNav button svg{
+  font-size:18px;
 }
 
-.bottomNav svg{
-  font-size:20px;
+.bottomNav button span{
+  font-size:10px;
+}
+
+.bottomNav .active{
+  color:#ffffff;
 }
 
 .centerButton{
@@ -245,10 +316,38 @@ body{
   height:52px!important;
   border-radius:50%!important;
   background:linear-gradient(135deg,#6F3EFF,#8B42FF)!important;
-  color:#fff!important;
+  color:white!important;
   margin-top:-18px;
   display:flex!important;
   justify-content:center;
   align-items:center;
   box-shadow:0 5px 20px rgba(111,62,255,.45);
-    }
+}
+
+.centerButton svg{
+  font-size:20px!important;
+}
+
+/* ===========================
+RESPONSIVE
+=========================== */
+
+@media (max-width:420px){
+
+.app{
+max-width:100%;
+}
+
+.inputArea{
+width:100%;
+}
+
+.bottomNav{
+width:100%;
+}
+
+.chat{
+height:400px;
+}
+
+  }
