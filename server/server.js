@@ -55,7 +55,7 @@ User: ${message}
       const genAI = new GoogleGenerativeAI(API_KEYS[i]);
 
       const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-flash",
+        model: "gemini-1.5-pro",
       });
 
       const result = await model.generateContent(prompt);
@@ -76,13 +76,12 @@ User: ${message}
 
       console.log(`❌ API Key ${i + 1} failed`);
 
-      // quota / auth issue → try next key
+      // quota/auth issue → try next key
       if (status === 429 || status === 403) {
         console.log(`⚠️ Switching to next API key...`);
         continue;
       }
 
-      // critical error → stop loop
       console.error("❌ Critical Error:", error);
       break;
     }
