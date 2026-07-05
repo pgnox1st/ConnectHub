@@ -1,26 +1,39 @@
 import "./FeatureCards.css";
 
+import {
+  MdOutlineChatBubbleOutline,
+  MdImageSearch
+} from "react-icons/md";
+
+import {
+  FiEdit3
+} from "react-icons/fi";
+
+import {
+  BsStars
+} from "react-icons/bs";
+
 const features = [
   {
-    icon: "💬",
+    icon: <MdOutlineChatBubbleOutline size={28} />,
     title: "AI Chat",
-    desc: "Smart conversations"
+    desc: "Smart conversations",
   },
   {
-    icon: "🔍",
+    icon: <MdImageSearch size={28} />,
     title: "AI Search",
-    desc: "Find answers instantly"
+    desc: "Find anything instantly",
   },
   {
-    icon: "🖼️",
+    icon: <BsStars size={28} />,
     title: "AI Image",
-    desc: "Generate amazing images"
+    desc: "Generate amazing images",
   },
   {
-    icon: "✍️",
-    title: "AI Write",
-    desc: "Write anything"
-  }
+    icon: <FiEdit3 size={28} />,
+    title: "AI Writer",
+    desc: "Write anything with AI",
+  },
 ];
 
 export default function FeatureCards() {
@@ -39,4 +52,4 @@ export default function FeatureCards() {
       ))}
     </div>
   );
-}
+            }
