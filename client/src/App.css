@@ -1,45 +1,42 @@
-/* Bottom Navigation Adjustments */
-.bottomNav {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 430px;
-  height: 80px; /* थोड़ी ऊंचाई बढ़ाई है */
-  background: #101726;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 0 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05); /* नेविगेशन को अलग दिखाने के लिए बॉर्डर */
+import React from 'react';
+import './App.css';
+import { FiClock, FiSettings } from "react-icons/fi";
+import { MdOutlineChatBubbleOutline } from "react-icons/md";
+import { BsStars } from "react-icons/bs";
+
+function App() {
+  return (
+    <div className="app">
+      {/* यहाँ आपका बाकी कंटेंट आएगा */}
+
+      <nav className="bottomNav">
+        <button>
+          <MdOutlineChatBubbleOutline />
+          Chat
+        </button>
+
+        <button>
+          <FiClock />
+          History
+        </button>
+
+        <button className="centerButton">
+          <BsStars />
+        </button>
+
+        <button>
+          🧰
+          Tools
+        </button>
+
+        <button>
+          <FiSettings />
+          Settings
+        </button>
+      </nav>
+    </div>
+  );
 }
 
-.bottomNav button {
-  background: none;
-  border: none;
-  color: #a8a8a8; /* अनसेलेक्टेड बटन का रंग हल्का रखा */
-  cursor: pointer;
-  font-size: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: 0.3s;
-}
-
-.bottomNav button:hover {
-  color: #ffffff;
-}
-
-.centerButton {
-  width: 60px !important;
-  height: 60px !important;
-  border-radius: 50% !important;
-  background: linear-gradient(135deg, #6F3EFF, #8B42FF) !important;
-  color: white !important;
-  font-size: 28px !important;
-  margin-bottom: 30px; /* इसे बार से ऊपर उठाने के लिए */
-  box-shadow: 0 4px 15px rgba(111, 62, 255, 0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+export default App;
+  
