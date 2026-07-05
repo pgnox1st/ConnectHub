@@ -8,12 +8,13 @@ import {
   FiMic,
   FiImage,
   FiClock,
-  FiSettings
+  FiSettings,
+  FiTool,
 } from "react-icons/fi";
 
 import {
   MdOutlineChatBubbleOutline,
-  MdWorkspacePremium
+  MdWorkspacePremium,
 } from "react-icons/md";
 
 import { BsStars } from "react-icons/bs";
@@ -24,8 +25,8 @@ function App() {
   const [messages, setMessages] = useState([
     {
       sender: "ai",
-      text: "👋 Hello! I am ConnectHub AI. How can I help you today?"
-    }
+      text: "👋 Hello! I am ConnectHub AI. How can I help you today?",
+    },
   ]);
 
   const sendMessage = async () => {
@@ -33,7 +34,7 @@ function App() {
 
     const userMessage = {
       sender: "user",
-      text: message
+      text: message,
     };
 
     setMessages((prev) => [...prev, userMessage]);
@@ -47,11 +48,11 @@ function App() {
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            message: currentMessage
-          })
+            message: currentMessage,
+          }),
         }
       );
 
@@ -61,16 +62,16 @@ function App() {
         ...prev,
         {
           sender: "ai",
-          text: data.reply || "No response"
-        }
+          text: data.reply || "No response.",
+        },
       ]);
     } catch (err) {
       setMessages((prev) => [
         ...prev,
         {
           sender: "ai",
-          text: "❌ Server connection failed."
-        }
+          text: "❌ Server connection failed.",
+        },
       ]);
     }
   };
@@ -78,13 +79,15 @@ function App() {
   return (
     <div className="app">
 
+      {/* Header */}
+
       <header className="header">
 
         <button className="menuButton">
           <FiMenu />
         </button>
 
-        <div>
+        <div className="logoArea">
           <h1>ConnectHub AI ✨</h1>
           <p>Your Intelligent Companion</p>
         </div>
@@ -93,18 +96,20 @@ function App() {
 
           <button className="proBtn">
             <MdWorkspacePremium />
-            Pro
+            <span>Pro</span>
           </button>
 
           <img
-            className="avatar"
             src="https://i.pravatar.cc/100"
             alt="Profile"
+            className="avatar"
           />
 
         </div>
 
       </header>
+
+      {/* Welcome */}
 
       <section className="welcome">
 
@@ -117,7 +122,11 @@ function App() {
 
       </section>
 
+      {/* Feature Cards */}
+
       <FeatureCards />
+
+      {/* Chat */}
 
       <div className="chat">
 
@@ -138,6 +147,8 @@ function App() {
 
       </div>
 
+      {/* Input */}
+
       <div className="inputArea">
 
         <input
@@ -152,11 +163,11 @@ function App() {
           }}
         />
 
-        <button>
+        <button title="Image">
           <FiImage />
         </button>
 
-        <button>
+        <button title="Voice">
           <FiMic />
         </button>
 
@@ -169,30 +180,46 @@ function App() {
 
       </div>
 
+      {/* Bottom Navigation */}
+
       <nav className="bottomNav">
 
-        <button>
+        <button className="active">
+
           <MdOutlineChatBubbleOutline />
+
           <span>Chat</span>
+
         </button>
 
         <button>
+
           <FiClock />
+
           <span>History</span>
+
         </button>
 
         <button className="centerButton">
+
           <BsStars />
+
         </button>
 
         <button>
-          🧰
+
+          <FiTool />
+
           <span>Tools</span>
+
         </button>
 
         <button>
+
           <FiSettings />
+
           <span>Settings</span>
+
         </button>
 
       </nav>
