@@ -1,42 +1,189 @@
-import React from 'react';
-import './App.css';
-import { FiClock, FiSettings } from "react-icons/fi";
-import { MdOutlineChatBubbleOutline } from "react-icons/md";
-import { BsStars } from "react-icons/bs";
-
-function App() {
-  return (
-    <div className="app">
-      {/* यहाँ आपका बाकी कंटेंट आएगा */}
-
-      <nav className="bottomNav">
-        <button>
-          <MdOutlineChatBubbleOutline />
-          Chat
-        </button>
-
-        <button>
-          <FiClock />
-          History
-        </button>
-
-        <button className="centerButton">
-          <BsStars />
-        </button>
-
-        <button>
-          🧰
-          Tools
-        </button>
-
-        <button>
-          <FiSettings />
-          Settings
-        </button>
-      </nav>
-    </div>
-  );
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
 }
 
-export default App;
-  
+body{
+  background:#070b17;
+  color:#fff;
+}
+
+.app{
+  max-width:430px;
+  margin:auto;
+  min-height:100vh;
+  background:#0b1120;
+  padding:15px;
+  padding-bottom:120px;
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.menuButton{
+  background:none;
+  border:none;
+  color:#fff;
+  font-size:24px;
+}
+
+.headerRight{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.proBtn{
+  background:linear-gradient(135deg,#6F3EFF,#8B42FF);
+  color:#fff;
+  border:none;
+  border-radius:25px;
+  padding:8px 16px;
+  display:flex;
+  gap:6px;
+  align-items:center;
+}
+
+.avatar{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+}
+
+.welcome{
+  margin-top:25px;
+}
+
+.welcome h2{
+  font-size:36px;
+}
+
+.welcome span{
+  color:#8b5cf6;
+}
+
+.welcome p{
+  color:#9ca3af;
+  margin-top:6px;
+}
+
+.feature-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+  margin-top:20px;
+}
+
+.feature-card{
+  background:#131c33;
+  border-radius:20px;
+  padding:20px;
+  text-align:center;
+  border:1px solid rgba(255,255,255,.05);
+}
+
+.feature-icon{
+  font-size:32px;
+  margin-bottom:12px;
+}
+
+.chat{
+  margin-top:25px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.aiMessage{
+  background:#1b2340;
+  padding:14px;
+  border-radius:16px;
+  width:85%;
+}
+
+.userMessage{
+  background:#6F3EFF;
+  padding:14px;
+  border-radius:16px;
+  align-self:flex-end;
+  width:85%;
+}
+
+.inputArea{
+  position:fixed;
+  bottom:90px;
+  left:50%;
+  transform:translateX(-50%);
+  width:430px;
+  max-width:100%;
+  display:flex;
+  gap:8px;
+  padding:10px;
+  background:#0b1120;
+}
+
+.inputArea input{
+  flex:1;
+  background:#161f36;
+  color:#fff;
+  border:none;
+  border-radius:30px;
+  padding:14px;
+}
+
+.inputArea button{
+  width:48px;
+  height:48px;
+  border:none;
+  border-radius:50%;
+  background:#222c49;
+  color:#fff;
+}
+
+.sendBtn{
+  background:#7c3aed!important;
+}
+
+.bottomNav{
+  position:fixed;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:430px;
+  max-width:100%;
+  height:75px;
+  background:#101726;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  border-top:1px solid rgba(255,255,255,.05);
+}
+
+.bottomNav button{
+  background:none;
+  border:none;
+  color:#a8a8a8;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  font-size:12px;
+}
+
+.bottomNav svg{
+  font-size:22px;
+}
+
+.centerButton{
+  width:60px!important;
+  height:60px!important;
+  border-radius:50%!important;
+  background:linear-gradient(135deg,#6F3EFF,#8B42FF)!important;
+  color:#fff!important;
+  margin-top:-30px;
+    }
