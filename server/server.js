@@ -10,55 +10,62 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const API_KEYS = [
+  process.env.GEMINI_API_KEY,
+  process.env.GEMINI_API_KEY_2,
+  process.env.GEMINI_API_KEY_3,
+];
 
 app.post("/api/chat", async (req, res) => {
-  try {
-    const { message } = req.body;
+  const { message } = req.body;
 
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
-    });
-
-    const prompt = `
+  const prompt = `
 You are pgnox1st AI, the official AI assistant of ConnectHub.
 
 Rules:
 - Your name is always "pgnox1st AI".
-- Never say you are Google AI, Gemini, Bard or any other assistant.
-- If anyone asks your name, reply:
-"My name is pgnox1st AI. I am the official AI assistant of ConnectHub."
-- Be friendly, helpful and professional.
-- Reply in the same language as the user whenever possible.
+- Never say you are Google AI, Gemini or Bard.
+- Reply in the user's language whenever possible.
 
 User: ${message}
 `;
 
-    const result = await model.generateContent(prompt);
-    const response = result.response.text();
+  let lastError = null;
 
-    res.json({
-      reply: response,
-    });
+  for (const key of API_KEYS) {
+    if (!key) continue;
 
-  } catch (error) {
+    try {
+      const genAI = new GoogleGenerativeAI(key);
 
-    console.error("========== GEMINI ERROR ==========");
-    console.error(error);
-    console.error("==================================");
+      const model = genAI.getGenerativeModel({
+        model: "gemini-2.5-flash",
+      });
 
-    let reply =
-      "⚠️ AI is temporarily unavailable. Please try again in a few minutes.";
+      const result = await model.generateContent(prompt);
 
-    if (error.status === 429) {
-      reply =
-        "⚠️ Daily AI limit has been reached. Please try again later.";
+      return res.json({
+        reply: result.response.text(),
+      });
+
+    } catch (error) {
+      lastError = error;
+
+      if (error.status === 429) {
+        console.log("Key limit reached. Trying next key...");
+        continue;
+      }
+
+      break;
     }
-
-    res.status(200).json({
-      reply,
-    });
   }
+
+  console.error(lastError);
+
+  return res.json({
+    reply:
+      "⚠️ All AI API keys have reached their limit. Please try again later.",
+  });
 });
 
 app.get("/", (req, res) => {
