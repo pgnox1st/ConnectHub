@@ -1,71 +1,47 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import "./App.css";
-import FeatureCards from "./components/FeatureCards";
+import FeatureCards from "./FeatureCards";
 import { FiMenu, FiSend, FiMic, FiImage, FiClock, FiSettings, FiTool } from "react-icons/fi";
 import { MdOutlineChatBubbleOutline, MdWorkspacePremium } from "react-icons/md";
 import { BsStars } from "react-icons/bs";
 
 function App() {
-  const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([
-    { sender: "ai", text: "👋 Hello! I am ConnectHub AI. How can I help you today?" },
+  const [messages] = useState([
+    { sender: "ai", text: "Hey there! I'm your AI assistant. Feel free to ask me anything..." }
   ]);
-
-  const sendMessage = async () => {
-    if (!message.trim()) return;
-    const userMessage = { sender: "user", text: message };
-    setMessages((prev) => [...prev, userMessage]);
-    const currentMessage = message;
-    setMessage("");
-
-    try {
-      const res = await fetch("https://connecthub-backend-ydqo.onrender.com/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: currentMessage }),
-      });
-      const data = await res.json();
-      setMessages((prev) => [...prev, { sender: "ai", text: data.reply || "No response." }]);
-    } catch (err) {
-      setMessages((prev) => [...prev, { sender: "ai", text: "❌ Server connection failed." }]);
-    }
-  };
 
   return (
     <div className="app">
       <header className="header">
         <button className="menuButton"><FiMenu /></button>
         <div className="logoArea">
-          <h1 className="logoText">ConnectHub <span>AI ✨</span></h1>
+          <h1>ConnectHub AI ✨</h1>
           <p>Your Intelligent Companion</p>
         </div>
-        <button className="proBtn"><MdWorkspacePremium /><span>Pro</span></button>
+        <button className="proBtn"><MdWorkspacePremium /> Pro</button>
       </header>
 
-      {/* नया Hero Section */}
-      <section className="hero">
-        <div className="heroLogo">✨</div>
-        <h2>ConnectHub AI</h2>
-        <p>Your intelligent assistant for chatting, searching, writing and creating.</p>
+      <section className="welcome">
+        <h2>Hello, User 👋</h2>
+        <p>How can I help you today?</p>
       </section>
 
       <FeatureCards />
 
       <div className="chat">
         {messages.map((msg, index) => (
-          <div key={index} className={msg.sender === "user" ? "messageRow userRow" : "messageRow aiRow"}>
-            {msg.sender === "ai" && <div className="avatar aiAvatar">✨</div>}
-            <div className={msg.sender === "user" ? "userMessage" : "aiMessage"}>{msg.text}</div>
-            {msg.sender === "user" && <div className="avatar userAvatar">U</div>}
+          <div key={index} className="aiRow messageRow">
+            <div className="avatar aiAvatar">✨</div>
+            <div className="aiMessage">{msg.text}</div>
           </div>
         ))}
       </div>
 
       <div className="inputArea">
-        <input type="text" placeholder="Ask anything..." value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={(e) => e.key === "Enter" && sendMessage()} />
+        <input type="text" placeholder="Ask anything..." />
         <button className="iconBtn"><FiImage /></button>
         <button className="iconBtn"><FiMic /></button>
-        <button className="sendBtn" onClick={sendMessage}><FiSend /></button>
+        <button className="sendBtn"><FiSend /></button>
       </div>
 
       <nav className="bottomNav">
@@ -79,4 +55,4 @@ function App() {
   );
 }
 export default App;
-                                       
+  
