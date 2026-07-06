@@ -18,6 +18,7 @@ import {
 } from "react-icons/md";
 
 import { BsStars } from "react-icons/bs";
+import { FaRobot } from "react-icons/fa";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -115,6 +116,7 @@ function App() {
             key={index}
             className={msg.sender === "user" ? "userMessage" : "aiMessage"}
           >
+            {msg.sender === "ai" && <FaRobot className="aiIcon" />}
             {msg.text}
           </div>
         ))}
@@ -134,11 +136,11 @@ function App() {
           }}
         />
 
-        <button>
+        <button className="iconBtn">
           <FiImage />
         </button>
 
-        <button>
+        <button className="iconBtn">
           <FiMic />
         </button>
 
@@ -178,4 +180,4 @@ function App() {
 }
 
 export default App;
-            
+    
