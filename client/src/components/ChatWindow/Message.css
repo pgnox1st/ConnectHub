@@ -1,0 +1,49 @@
+.message{
+display:flex;
+gap:15px;
+margin-bottom:20px;
+}
+
+.message.user{
+flex-direction:row-reverse;
+}
+
+.avatar{
+width:45px;
+height:45px;
+border-radius:50%;
+background:#7c3aed;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+}
+
+.message-box{
+background:#171b28;
+padding:18px;
+border-radius:16px;
+max-width:80%;
+color:#fff;
+}
+
+.message.user .message-box{
+background:#7c3aed;
+}
+
+.message-actions{
+display:flex;
+gap:15px;
+margin-top:12px;
+font-size:18px;
+color:#9ca3af;
+}
+
+.message-actions svg{
+cursor:pointer;
+transition:.3s;
+}
+
+.message-actions svg:hover{
+color:#8b5cf6;
+  }
