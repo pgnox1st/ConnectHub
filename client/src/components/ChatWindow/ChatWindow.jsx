@@ -1,5 +1,5 @@
 import React from "react";
-import "./ChatWindow.css";
+import "../ChatWindow.css";
 
 import Message from "./Message";
 import ChatInput from "./ChatInput";
@@ -7,7 +7,6 @@ import ChatInput from "./ChatInput";
 function ChatWindow() {
   return (
     <div className="chat-window">
-
       <Message
         type="ai"
         text="Hello 👋 Welcome to ConnectHub AI. How can I help you today?"
@@ -24,7 +23,6 @@ function ChatWindow() {
       />
 
       <ChatInput />
-
     </div>
   );
 }
