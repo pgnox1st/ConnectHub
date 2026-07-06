@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./ChatInput.css";
+import "./Chatinput.css";
 import { FiImage, FiMic, FiSend } from "react-icons/fi";
 
 function ChatInput() {
