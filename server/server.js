@@ -8,13 +8,22 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: "https://connect-hub-y73k.vercel.app",
+  methods: ["GET", "POST"]
+}));
+
 app.use(express.json({ limit: "50mb" }));
 
-// Gemini
+// Gemini AI Setup
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// AI Chat API
+// ✅ HOME ROUTE (ONLY ONE TIME)
+app.get("/", (req, res) => {
+  res.send("✅ ConnectHub AI Backend Running...");
+});
+
+// ✅ AI CHAT API
 app.post("/api/chat", async (req, res) => {
   try {
     const { message } = req.body;
@@ -31,7 +40,6 @@ app.post("/api/chat", async (req, res) => {
     });
 
     const result = await model.generateContent(message);
-
     const reply = result.response.text();
 
     return res.status(200).json({
@@ -49,14 +57,9 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
-// Test Route
-app.get("/", (req, res) => {
-  res.send("✅ ConnectHub AI Backend Running...");
-});
-
 // Server Start
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
