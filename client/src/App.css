@@ -253,3 +253,57 @@ body {
   .inputArea { width: 100%; }
   .bottomNav { width: 100%; }
      }
+.messageRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.aiRow {
+  justify-content: flex-start;
+}
+
+.userRow {
+  justify-content: flex-end;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.aiAvatar {
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: #fff;
+}
+
+.userAvatar {
+  background: #232b45;
+  color: #fff;
+}
+
+.aiMessage,
+.userMessage {
+  max-width: 75%;
+  padding: 14px 16px;
+  border-radius: 18px;
+  word-break: break-word;
+}
+
+.aiMessage {
+  background: #18223b;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.userMessage {
+  background: linear-gradient(135deg, #7c3aed, #5b21b6);
+   }
+   
