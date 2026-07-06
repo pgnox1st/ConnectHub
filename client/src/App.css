@@ -1,32 +1,24 @@
-/* RESET */
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
-body { background: #050508; color: #fff; height: 100vh; }
+/* Full UI Reset */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #050508 !important; color: #fff !important; }
 
-/* MAIN APP */
-.app { width: 100%; max-width: 450px; margin: auto; height: 100vh; display: flex; flex-direction: column; background: #050508; }
+/* Main layout forced to Black */
+.app { 
+  background: #050508 !important; 
+  min-height: 100vh; 
+  padding: 20px;
+}
 
-/* HEADER */
-.header { display: flex; align-items: center; justify-content: space-between; padding: 20px; }
-.proBtn { background: #6d28d9; border: none; color: white; padding: 6px 12px; border-radius: 8px; font-size: 12px; }
-
-/* WELCOME */
-.welcome-sec { padding: 0 20px; margin-bottom: 20px; }
-.welcome-sec h1 { font-size: 26px; }
-
-/* FEATURE GRID (THE BOXES) */
-.feature-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 0 20px; margin-bottom: 20px; }
-.feature-card { background: #0f111a; padding: 20px; border-radius: 16px; border: 1px solid #1f2937; text-align: center; }
-.feature-card p { font-size: 12px; margin-top: 10px; color: #9ca3af; }
-
-/* CHAT WINDOW */
-.chat-window { flex: 1; padding: 20px; overflow-y: auto; }
-.ai-bubble { background: #0f111a; padding: 16px; border-radius: 16px; font-size: 14px; border: 1px solid #1f2937; }
-
-/* INPUT AREA */
-.input-area { background: #0f111a; margin: 0 20px 20px 20px; padding: 12px 20px; border-radius: 30px; display: flex; align-items: center; border: 1px solid #1f2937; }
-.input-area input { flex: 1; background: transparent; border: none; outline: none; color: white; padding-left: 10px; }
-
-/* NAVBAR */
-.navbar { display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid #1f2937; background: #0a0a0c; }
-.nav-btn { display: flex; flex-direction: column; align-items: center; color: #6b7280; font-size: 10px; background: none; border: none; }
-.main-nav-btn { background: #7c3aed; color: white; width: 50px; height: 50px; border-radius: 50%; margin-top: -35px; border: none; box-shadow: 0 0 15px #7c3aed; }
+/* Feature Cards Forced Style */
+.feature-grid { 
+  display: grid !important; 
+  grid-template-columns: repeat(2, 1fr) !important; 
+  gap: 15px !important; 
+}
+.feature-card { 
+  background: #0f111a !important; 
+  border: 1px solid #2d2d3a !important; 
+  padding: 20px !important; 
+  border-radius: 20px !important; 
+  text-align: center !important; 
+}
