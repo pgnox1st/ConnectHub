@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import "./Chatinput.css";
 import { FiImage, FiMic, FiSend } from "react-icons/fi";
 
-// 🔥 IMPORTANT: यहां अपना Render backend URL डालना है
-const API_URL = "https://YOUR-BACKEND.onrender.com";
+// ✅ YOUR REAL BACKEND
+const API_URL = "https://connecthub-backend-ydqo.onrender.com";
 
 function ChatInput() {
   const [message, setMessage] = useState("");
@@ -27,13 +27,13 @@ function ChatInput() {
 
       const data = await res.json();
 
-      // AI reply show
+      // AI reply show (temporary UI)
       alert(data.reply || "No response from AI");
 
       setMessage("");
-    } catch (err) {
-      console.error(err);
-      alert("AI is currently unavailable");
+    } catch (error) {
+      console.error("Error:", error);
+      alert("AI is currently unavailable. Please try again later.");
     }
 
     setLoading(false);
@@ -51,18 +51,19 @@ function ChatInput() {
         }}
       />
 
-      <button>
+      <button type="button">
         <FiImage />
       </button>
 
-      <button>
+      <button type="button">
         <FiMic />
       </button>
 
       <button
+        type="button"
         onClick={sendMessage}
-        className="send-btn"
         disabled={loading}
+        className="send-btn"
       >
         {loading ? "..." : <FiSend />}
       </button>
