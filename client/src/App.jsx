@@ -78,79 +78,50 @@ function App() {
 
   return (
     <div className="app">
-
       {/* Header */}
-
       <header className="header">
-
         <button className="menuButton">
           <FiMenu />
         </button>
 
         <div className="logoArea">
-          <h1>ConnectHub AI ✨</h1>
+          <h1 className="logoText">
+            ConnectHub <span>AI ✨</span>
+          </h1>
           <p>Your Intelligent Companion</p>
         </div>
 
-        <div className="headerRight">
-
-          <button className="proBtn">
-            <MdWorkspacePremium />
-            <span>Pro</span>
-          </button>
-
-          <img
-            src="https://i.pravatar.cc/100"
-            alt="Profile"
-            className="avatar"
-          />
-
-        </div>
-
+        <button className="proBtn">
+          <MdWorkspacePremium />
+          <span>Pro</span>
+        </button>
       </header>
 
-      {/* Welcome */}
-
+      {/* Welcome Section */}
       <section className="welcome">
-
         <h2>
-          Hello,
-          <span> User 👋</span>
+          Hello, <span>User 👋</span>
         </h2>
-
         <p>How can I help you today?</p>
-
       </section>
 
       {/* Feature Cards */}
-
       <FeatureCards />
 
-      {/* Chat */}
-
+      {/* Chat Section */}
       <div className="chat">
-
         {messages.map((msg, index) => (
-
           <div
             key={index}
-            className={
-              msg.sender === "user"
-                ? "userMessage"
-                : "aiMessage"
-            }
+            className={msg.sender === "user" ? "userMessage" : "aiMessage"}
           >
             {msg.text}
           </div>
-
         ))}
-
       </div>
 
-      {/* Input */}
-
+      {/* Input Section */}
       <div className="inputArea">
-
         <input
           type="text"
           placeholder="Ask anything..."
@@ -163,69 +134,48 @@ function App() {
           }}
         />
 
-        <button title="Image">
+        <button>
           <FiImage />
         </button>
 
-        <button title="Voice">
+        <button>
           <FiMic />
         </button>
 
-        <button
-          className="sendBtn"
-          onClick={sendMessage}
-        >
+        <button className="sendBtn" onClick={sendMessage}>
           <FiSend />
         </button>
-
       </div>
 
       {/* Bottom Navigation */}
-
       <nav className="bottomNav">
-
         <button className="active">
-
           <MdOutlineChatBubbleOutline />
-
           <span>Chat</span>
-
         </button>
 
         <button>
-
           <FiClock />
-
           <span>History</span>
-
         </button>
 
         <button className="centerButton">
-
           <BsStars />
-
         </button>
 
         <button>
-
           <FiTool />
-
           <span>Tools</span>
-
         </button>
 
         <button>
-
           <FiSettings />
-
           <span>Settings</span>
-
         </button>
-
       </nav>
-
     </div>
   );
 }
 
 export default App;
+            
