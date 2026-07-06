@@ -1,33 +1,47 @@
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
-body { background: #050505; color: #fff; min-height: 100vh; }
+:root {
+  --bg-color: #050508;
+  --card-bg: #0f111a;
+  --accent-color: #7c3aed;
+  --text-main: #ffffff;
+  --text-dim: #9ca3af;
+}
 
-.app { max-width: 430px; margin: auto; padding: 20px; padding-bottom: 120px; }
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
 
-/* Header */
-.header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; }
-.logoArea h1 { font-size: 18px; }
-.logoArea p { font-size: 11px; color: #6b7280; }
-.menuButton { background: #111; border: none; color: white; padding: 5px; cursor: pointer; }
-.proBtn { background: #6366f1; border: none; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; }
+body { background: var(--bg-color); color: var(--text-main); height: 100vh; overflow: hidden; }
 
-/* Welcome */
-.welcome { margin-bottom: 25px; }
-.welcome h2 { font-size: 26px; margin-bottom: 5px; }
-.welcome p { color: #9ca3af; }
+.app { width: 100%; max-width: 450px; margin: auto; height: 100vh; display: flex; flex-direction: column; position: relative; }
 
-/* Chat */
-.chat { margin-top: 20px; }
-.messageRow { display: flex; gap: 10px; align-items: flex-start; }
-.aiAvatar { width: 35px; height: 35px; background: #6366f1; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-.aiMessage { background: #111827; padding: 15px; border-radius: 15px; font-size: 14px; line-height: 1.5; color: #d1d5db; }
+/* HEADER */
+.header { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; }
+.logo-container { display: flex; flex-direction: column; }
+.logo-container h2 { font-size: 18px; font-weight: 700; }
+.logo-container p { font-size: 10px; color: var(--text-dim); }
+.pro-btn { background: #6d28d9; border: none; color: white; padding: 5px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; }
 
-/* Input */
-.inputArea { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: #111827; border-radius: 30px; padding: 10px 20px; display: flex; align-items: center; gap: 10px; border: 1px solid #1f2937; }
-.inputArea input { flex: 1; background: transparent; border: none; outline: none; color: white; }
-.iconBtn { background: transparent; border: none; color: #9ca3af; cursor: pointer; }
-.sendBtn { background: #6366f1; border: none; color: white; padding: 10px; border-radius: 50%; cursor: pointer; }
+/* WELCOME */
+.welcome-sec { padding: 20px; }
+.welcome-sec h1 { font-size: 26px; }
+.welcome-sec span { color: #a78bfa; }
 
-/* Bottom Nav */
-.bottomNav { position: fixed; bottom: 0; width: 100%; max-width: 430px; display: flex; justify-content: space-around; padding: 15px; background: #050505; border-top: 1px solid #1f2937; }
-.bottomNav button { background: none; border: none; color: #9ca3af; display: flex; flex-direction: column; align-items: center; font-size: 10px; gap: 5px; cursor: pointer; }
-.centerButton { background: #6366f1 !important; color: white !important; width: 50px; height: 50px; border-radius: 50%; margin-top: -30px; }
+/* FEATURE GRID */
+.feature-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 0 20px; }
+.feature-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
+.icon-box { width: 50px; height: 50px; background: var(--card-bg); border: 1px solid #1f2937; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--accent-color); font-size: 20px; }
+.feature-item p { font-size: 10px; color: var(--text-dim); }
+
+/* CHAT AREA */
+.chat-window { flex: 1; padding: 20px; overflow-y: auto; }
+.ai-bubble { background: var(--card-bg); padding: 15px; border-radius: 16px; font-size: 14px; line-height: 1.5; border: 1px solid #1f2937; color: #e5e7eb; }
+
+/* INPUT AREA */
+.input-area { background: var(--card-bg); padding: 10px; border-radius: 20px; display: flex; align-items: center; margin: 20px; border: 1px solid #1f2937; }
+.input-area input { flex: 1; background: transparent; border: none; outline: none; color: white; padding: 5px 10px; }
+.input-actions { display: flex; gap: 10px; color: var(--text-dim); }
+.send-btn { background: var(--accent-color); border: none; color: white; padding: 8px; border-radius: 50%; cursor: pointer; }
+
+/* NAVBAR */
+.navbar { display: flex; justify-content: space-around; padding: 15px; background: #0a0a0c; border-top: 1px solid #1f2937; }
+.nav-btn { display: flex; flex-direction: column; align-items: center; color: var(--text-dim); font-size: 10px; border: none; background: none; }
+.main-nav-btn { background: var(--accent-color); color: white; width: 55px; height: 55px; border-radius: 50%; margin-top: -30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(124, 58, 237, 0.5); }
+          
