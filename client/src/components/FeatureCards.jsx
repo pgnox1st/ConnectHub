@@ -1,61 +1,51 @@
 import "./FeatureCards.css";
 
 import {
-  MdOutlineChatBubbleOutline,
-  MdImageSearch
-} from "react-icons/md";
-
-import {
-  FiEdit3
+  FiMessageSquare,
+  FiSearch,
+  FiImage,
+  FiEdit3,
 } from "react-icons/fi";
 
-import {
-  BsStars
-} from "react-icons/bs";
-
-const features = [
+const cards = [
   {
-    icon: <MdOutlineChatBubbleOutline size={22} />,
+    icon: <FiMessageSquare />,
     title: "AI Chat",
-    desc: "Smart conversations",
+    desc: "Chat instantly",
   },
   {
-    icon: <MdImageSearch size={22} />,
+    icon: <FiSearch />,
     title: "AI Search",
-    desc: "Find answers instantly",
+    desc: "Search anything",
   },
   {
-    icon: <BsStars size={22} />,
+    icon: <FiImage />,
     title: "AI Image",
-    desc: "Generate amazing images",
+    desc: "Create images",
   },
   {
-    icon: <FiEdit3 size={22} />,
-    title: "AI Writer",
-    desc: "Write anything with AI",
+    icon: <FiEdit3 />,
+    title: "AI Pencil",
+    desc: "Write & edit",
   },
 ];
 
-export default function FeatureCards() {
+function FeatureCards() {
   return (
-    <section className="feature-grid">
-
-      {features.map((item, index) => (
-
+    <div className="feature-grid">
+      {cards.map((card, index) => (
         <div className="feature-card" key={index}>
-
           <div className="feature-icon">
-            {item.icon}
+            {card.icon}
           </div>
 
-          <h3>{item.title}</h3>
+          <h3>{card.title}</h3>
 
-          <p>{item.desc}</p>
-
+          <p>{card.desc}</p>
         </div>
-
       ))}
-
-    </section>
+    </div>
   );
 }
+
+export default FeatureCards;
