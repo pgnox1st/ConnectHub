@@ -1,23 +1,22 @@
-import React from "react";
-import "./FeatureCards.css";
-import { FiMessageSquare, FiSearch, FiImage, FiEdit3 } from "react-icons/fi";
+import React from 'react';
+import { FiMessageSquare, FiGlobe, FiImage, FiEdit3 } from 'react-icons/fi';
 
-const FeatureCards = () => {
-  const items = [
-    { icon: <FiMessageSquare />, title: "AI Chat" },
-    { icon: <FiSearch />, title: "AI Search" },
-    { icon: <FiImage />, title: "AI Image" },
-    { icon: <FiEdit3 />, title: "AI Writer" },
-  ];
+const features = [
+  { icon: <FiMessageSquare/>, label: "AI Chat" },
+  { icon: <FiGlobe/>, label: "AI Search" },
+  { icon: <FiImage/>, label: "AI Image" },
+  { icon: <FiEdit3/>, label: "AI Writer" }
+];
+
+export default function FeatureGrid() {
   return (
     <div className="feature-grid">
-      {items.map((item, i) => (
-        <div key={i} className="feature-card">
-          {item.icon}
-          <p>{item.title}</p>
+      {features.map((item, index) => (
+        <div key={index} className="feature-card">
+          <div className="icon-container">{item.icon}</div>
+          <p className="feature-text">{item.label}</p>
         </div>
       ))}
     </div>
   );
-};
-export default FeatureCards;
+}
