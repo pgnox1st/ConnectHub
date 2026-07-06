@@ -2,34 +2,33 @@ import React, { useState } from "react";
 import "./Chatinput.css";
 import { FiImage, FiMic, FiSend } from "react-icons/fi";
 
+// 🔥 IMPORTANT: यहां अपना Render backend URL डालना है
+const API_URL = "https://YOUR-BACKEND.onrender.com";
+
 function ChatInput() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // ✅ FIXED API CALL (ONLY ONE FUNCTION INSIDE COMPONENT)
   const sendMessage = async () => {
     if (!message.trim()) return;
 
     setLoading(true);
 
     try {
-      const res = await fetch(
-        "https://YOUR-BACKEND.onrender.com/api/chat",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            message: message,
-          }),
-        }
-      );
+      const res = await fetch(`${API_URL}/api/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: message,
+        }),
+      });
 
       const data = await res.json();
 
-      // ✅ AI reply show
-      alert(data.reply);
+      // AI reply show
+      alert(data.reply || "No response from AI");
 
       setMessage("");
     } catch (err) {
