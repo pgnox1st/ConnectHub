@@ -6,6 +6,7 @@ function ChatInput() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // ✅ FIXED API CALL (ONLY ONE FUNCTION INSIDE COMPONENT)
   const sendMessage = async () => {
     if (!message.trim()) return;
 
@@ -13,26 +14,27 @@ function ChatInput() {
 
     try {
       const res = await fetch(
-        "https://connect-hub-79kd.vercel.app/api/chat",
+        "https://YOUR-BACKEND.onrender.com/api/chat",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            message,
+            message: message,
           }),
         }
       );
 
       const data = await res.json();
 
+      // ✅ AI reply show
       alert(data.reply);
 
       setMessage("");
     } catch (err) {
-      alert("Server Error");
       console.error(err);
+      alert("AI is currently unavailable");
     }
 
     setLoading(false);
