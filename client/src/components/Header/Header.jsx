@@ -6,31 +6,21 @@ import { MdWorkspacePremium } from "react-icons/md";
 function Header() {
   return (
     <header className="header">
-
-      <div className="left">
-
-        <button className="menuBtn">
+      <div className="header-left">
+        <button className="menu-btn">
           <FiMenu />
         </button>
 
         <div>
-
           <h2>ConnectHub AI ✨</h2>
-
           <p>Your Intelligent Companion</p>
-
         </div>
-
       </div>
 
-      <button className="proBtn">
-
+      <button className="pro-btn">
         <MdWorkspacePremium />
-
         Pro
-
       </button>
-
     </header>
   );
 }
