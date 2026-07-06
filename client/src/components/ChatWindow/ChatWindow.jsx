@@ -1,8 +1,8 @@
 import React from "react";
-import "../ChatWindow.css";
+import "./Chatwindow.css";
 
 import Message from "./Message";
-import ChatInput from "./ChatInput";
+import ChatInput from "./Chatinput";
 
 function ChatWindow() {
   return (
