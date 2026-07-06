@@ -19,7 +19,7 @@ body{
 
 .app{
   width:100%;
-  max-width:390px;
+  max-width:430px;
   min-height:100vh;
   margin:auto;
   background:#0b1120;
@@ -44,8 +44,9 @@ HEADER
 }
 
 .header h1{
-  font-size:21px;
-  font-weight:700;
+  font-size:20px;
+  font-weight:800;
+  letter-spacing:1px;
 }
 
 .header p{
@@ -71,12 +72,6 @@ HEADER
   font-size:18px;
 }
 
-.headerRight{
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-
 .proBtn{
   display:flex;
   align-items:center;
@@ -94,13 +89,6 @@ HEADER
   font-size:15px;
 }
 
-.avatar{
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  object-fit:cover;
-}
-
 /* ===========================
 WELCOME
 =========================== */
@@ -110,7 +98,7 @@ WELCOME
 }
 
 .welcome h2{
-  font-size:28px;
+  font-size:24px;
   font-weight:700;
 }
 
@@ -137,8 +125,9 @@ FEATURE CARDS
 
 .feature-card{
   background:#141d34;
-  border-radius:18px;
-  padding:16px;
+  border-radius:16px;
+  padding:6px;
+  min-height:65px;
   border:1px solid rgba(255,255,255,.05);
   text-align:center;
   transition:.25s;
@@ -151,17 +140,17 @@ FEATURE CARDS
 
 .feature-icon{
   color:#9b6cff;
-  font-size:24px;
-  margin-bottom:8px;
+  font-size:14px;
+  margin-bottom:4px;
 }
 
 .feature-card h3{
-  font-size:15px;
+  font-size:11px;
   margin-bottom:5px;
 }
 
 .feature-card p{
-  font-size:11px;
+  font-size:8px;
   color:#9ca3af;
   line-height:1.4;
 }
@@ -171,7 +160,7 @@ CHAT
 =========================== */
 
 .chat{
-  height:430px;
+  height:70vh;
   overflow-y:auto;
   display:flex;
   flex-direction:column;
@@ -195,8 +184,10 @@ CHAT
   padding:12px 15px;
   border-radius:16px;
   width:85%;
+  max-width:90%;
   font-size:14px;
   line-height:1.5;
+  box-shadow:0 4px 15px rgba(0,0,0,.25);
 }
 
 .userMessage{
@@ -204,9 +195,11 @@ CHAT
   padding:12px 15px;
   border-radius:16px;
   width:85%;
+  max-width:90%;
   align-self:flex-end;
   font-size:14px;
   line-height:1.5;
+  box-shadow:0 4px 15px rgba(111,62,255,.35);
 }
 
 /* ===========================
@@ -215,10 +208,10 @@ INPUT
 
 .inputArea{
   position:fixed;
-  bottom:68px;
+  bottom:72px;
   left:50%;
   transform:translateX(-50%);
-  width:390px;
+  width:430px;
   max-width:100%;
   padding:8px;
   background:#0b1120;
@@ -229,10 +222,10 @@ INPUT
 
 .inputArea input{
   flex:1;
-  height:44px;
+  height:52px;
   border:none;
   outline:none;
-  border-radius:24px;
+  border-radius:28px;
   background:#161f36;
   color:white;
   padding:0 15px;
@@ -278,9 +271,9 @@ BOTTOM NAVIGATION
   left:50%;
   bottom:0;
   transform:translateX(-50%);
-  width:390px;
+  width:430px;
   max-width:100%;
-  height:66px;
+  height:72px;
   background:#101726;
   border-top:1px solid rgba(255,255,255,.05);
   display:flex;
@@ -332,22 +325,15 @@ BOTTOM NAVIGATION
 RESPONSIVE
 =========================== */
 
-@media (max-width:420px){
-
-.app{
-max-width:100%;
-}
-
-.inputArea{
-width:100%;
-}
-
-.bottomNav{
-width:100%;
-}
-
-.chat{
-height:400px;
-}
-
+@media (max-width:430px){
+  .app{
+    max-width:100%;
   }
+  .inputArea{
+    width:100%;
+  }
+  .bottomNav{
+    width:100%;
+  }
+   }
+     
