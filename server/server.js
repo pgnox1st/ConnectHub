@@ -25,7 +25,7 @@ API_KEYS.forEach((k, i) => {
 });
 console.log("====================================");
 
-// ================= TEST ROUTE =================
+// ================= HOME ROUTE =================
 app.get("/", (req, res) => {
   res.send("✅ ConnectHub Backend Running");
 });
@@ -56,19 +56,19 @@ User: ${message}
 
     for (let i = 0; i < API_KEYS.length; i++) {
       try {
-        console.log(`🚀 Trying API Key ${i + 1}`);
+        console.log(\`🚀 Trying API Key \${i + 1}\`);
 
         const genAI = new GoogleGenerativeAI(API_KEYS[i]);
 
         const model = genAI.getGenerativeModel({
-          model: "gemini-1.5-flash",
+          model: "gemini-2.5-flash",
         });
 
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const text = await response.text();
 
-        console.log(`✅ Success with API Key ${i + 1}`);
+        console.log(\`✅ Success with API Key \${i + 1}\`);
 
         return res.json({
           reply: text,
@@ -79,11 +79,10 @@ User: ${message}
 
         const status = error?.status || error?.response?.status;
 
-        console.log(`❌ API Key ${i + 1} failed`);
+        console.log(\`❌ API Key \${i + 1} failed\`);
 
-        // quota or auth issue → try next key
         if (status === 429 || status === 403) {
-          console.log(`⚠️ Switching to next API key...`);
+          console.log("⚠️ Switching to next API key...");
           continue;
         }
 
