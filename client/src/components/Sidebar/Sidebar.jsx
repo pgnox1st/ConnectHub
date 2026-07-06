@@ -1,45 +1,87 @@
 import React from "react";
+import "./Sidebar.css";
+
+import {
+  FiMessageSquare,
+  FiClock,
+  FiImage,
+  FiFolder,
+  FiMic,
+  FiStar,
+  FiUser,
+  FiSettings,
+  FiMoon,
+  FiPlus
+} from "react-icons/fi";
 
 function Sidebar() {
   return (
     <aside className="sidebar">
 
-      <div className="sidebar-top">
+      <div>
 
         <div className="logo">
           <h2>🤖 ConnectHub AI</h2>
-          <p>pgnox1st AI v2.5</p>
+          <p>Premium AI Assistant</p>
         </div>
 
         <button className="new-chat">
-          ➕ New Chat
+          <FiPlus />
+          New Chat
         </button>
 
         <div className="menu">
 
-          <button>💬 Chats</button>
+          <button>
+            <FiMessageSquare />
+            Chats
+          </button>
 
-          <button>🕘 History</button>
+          <button>
+            <FiClock />
+            History
+          </button>
 
-          <button>🖼 Images</button>
+          <button>
+            <FiImage />
+            AI Images
+          </button>
 
-          <button>📁 Files</button>
+          <button>
+            <FiFolder />
+            Files
+          </button>
 
-          <button>🎤 Voice</button>
+          <button>
+            <FiMic />
+            Voice Chat
+          </button>
 
-          <button>⭐ Favorites</button>
+          <button>
+            <FiStar />
+            Favorites
+          </button>
 
         </div>
 
       </div>
 
-      <div className="sidebar-bottom">
+      <div className="bottom-menu">
 
-        <button>👤 Profile</button>
+        <button>
+          <FiUser />
+          Profile
+        </button>
 
-        <button>⚙️ Settings</button>
+        <button>
+          <FiSettings />
+          Settings
+        </button>
 
-        <button>🌙 Dark Mode</button>
+        <button>
+          <FiMoon />
+          Dark Mode
+        </button>
 
       </div>
 
