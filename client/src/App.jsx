@@ -42,14 +42,15 @@ function App() {
         <button className="proBtn"><MdWorkspacePremium /><span>Pro</span></button>
       </header>
 
-      <section className="welcome">
-        <h2>Hello, <span>User 👋</span></h2>
-        <p>How can I help you today?</p>
+      {/* नया Hero Section */}
+      <section className="hero">
+        <div className="heroLogo">✨</div>
+        <h2>ConnectHub AI</h2>
+        <p>Your intelligent assistant for chatting, searching, writing and creating.</p>
       </section>
 
       <FeatureCards />
 
-      {/* नया चैट UI स्ट्रक्चर */}
       <div className="chat">
         {messages.map((msg, index) => (
           <div key={index} className={msg.sender === "user" ? "messageRow userRow" : "messageRow aiRow"}>
@@ -78,4 +79,4 @@ function App() {
   );
 }
 export default App;
-      
+                                       
