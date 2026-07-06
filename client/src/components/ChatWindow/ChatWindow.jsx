@@ -1,41 +1,29 @@
 import React from "react";
 import "./ChatWindow.css";
-import {
-  FiCopy,
-  FiThumbsUp,
-  FiThumbsDown,
-  FiRefreshCw
-} from "react-icons/fi";
+
+import Message from "./Message";
+import ChatInput from "./ChatInput";
 
 function ChatWindow() {
   return (
     <div className="chat-window">
 
-      <div className="chat-message ai">
+      <Message
+        type="ai"
+        text="Hello 👋 Welcome to ConnectHub AI. How can I help you today?"
+      />
 
-        <div className="avatar">🤖</div>
+      <Message
+        type="user"
+        text="Hi, can you help me build a website?"
+      />
 
-        <div className="bubble">
+      <Message
+        type="ai"
+        text="Yes! I can help you build a premium AI website with chat, image generation, voice, search, login system and many more features."
+      />
 
-          <h4>ConnectHub AI</h4>
-
-          <p>
-            Hello 👋 Welcome to ConnectHub AI.
-            <br />
-            Ask me anything. I can help you with coding,
-            writing, images, research, mathematics and much more.
-          </p>
-
-          <div className="actions">
-            <FiCopy />
-            <FiRefreshCw />
-            <FiThumbsUp />
-            <FiThumbsDown />
-          </div>
-
-        </div>
-
-      </div>
+      <ChatInput />
 
     </div>
   );
