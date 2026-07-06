@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import "./Chatinput.css";
 import { FiImage, FiMic, FiSend } from "react-icons/fi";
 
-// ✅ YOUR REAL BACKEND
 const API_URL = "https://connecthub-backend-ydqo.onrender.com";
 
 function ChatInput() {
@@ -20,20 +19,22 @@ function ChatInput() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          message: message,
-        }),
+        body: JSON.stringify({ message }),
       });
 
-      const data = await res.json();
+      // ❗ safe parse
+      const data = await res.json().catch(() => null);
 
-      // AI reply show (temporary UI)
-      alert(data.reply || "No response from AI");
+      if (!res.ok) {
+        throw new Error("Server Error");
+      }
+
+      alert(data?.reply || "No AI response");
 
       setMessage("");
     } catch (error) {
       console.error("Error:", error);
-      alert("AI is currently unavailable. Please try again later.");
+      alert("AI is currently unavailable (backend issue)");
     }
 
     setLoading(false);
@@ -46,25 +47,13 @@ function ChatInput() {
         placeholder="Ask anything..."
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") sendMessage();
-        }}
+        onKeyDown={(e) => e.key === "Enter" && sendMessage()}
       />
 
-      <button type="button">
-        <FiImage />
-      </button>
+      <button><FiImage /></button>
+      <button><FiMic /></button>
 
-      <button type="button">
-        <FiMic />
-      </button>
-
-      <button
-        type="button"
-        onClick={sendMessage}
-        disabled={loading}
-        className="send-btn"
-      >
+      <button onClick={sendMessage} disabled={loading}>
         {loading ? "..." : <FiSend />}
       </button>
     </div>
