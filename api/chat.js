@@ -18,6 +18,12 @@ export default async function handler(req, res) {
       });
     }
 
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({
+        reply: "GEMINI_API_KEY is missing",
+      });
+    }
+
     const genAI = new GoogleGenerativeAI(
       process.env.GEMINI_API_KEY
     );
@@ -39,7 +45,7 @@ export default async function handler(req, res) {
     console.error("Gemini Error:", error);
 
     return res.status(500).json({
-      reply: error.message || String(error),
+      reply: error.message || "Gemini API Error",
     });
 
   }
