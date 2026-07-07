@@ -1,54 +1,62 @@
 import React, { useState } from "react";
-import "./Chatinput.css";
+import "./ChatInput.css";
 import { FiImage, FiMic, FiSend } from "react-icons/fi";
 
-function ChatInput({ addMessage }) {
+function ChatInput() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const sendMessage = async () => {
-    if (!message.trim() || loading) return;
+    if (!message.trim()) return;
 
-    addMessage("user", message);
-
-    const userMessage = message;
-    setMessage("");
     setLoading(true);
 
     try {
-      const res = await fetch("/api/chat", {
+      const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          message: userMessage,
+          message: message,
         }),
       });
 
-      const data = await res.json();
+      const data = await response.json();
 
-      addMessage(
-        "ai",
-        data.reply || "Sorry, I couldn't generate a response."
-      );
+      if (!response.ok) {
+        throw new Error(data.reply || "AI request failed");
+      }
+
+      alert(data.reply);
+
+      setMessage("");
+
     } catch (error) {
-      console.error(error);
+      console.error("Chat Error:", error);
 
-      addMessage(
-        "ai",
-        "⚠️ AI is currently unavailable. Please try again later."
-      );
+      alert(error.message);
+
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
+
 
   return (
     <div className="chat-input">
+
+      <button className="icon-btn">
+        <FiImage />
+      </button>
+
+      <button className="icon-btn">
+        <FiMic />
+      </button>
+
       <input
         type="text"
-        placeholder="Ask anything..."
+        placeholder="Message AI..."
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={(e) => {
@@ -58,22 +66,14 @@ function ChatInput({ addMessage }) {
         }}
       />
 
-      <button type="button">
-        <FiImage />
-      </button>
-
-      <button type="button">
-        <FiMic />
-      </button>
-
       <button
-        type="button"
+        className="send-btn"
         onClick={sendMessage}
         disabled={loading}
-        className="send-btn"
       >
-        {loading ? "..." : <FiSend />}
+        <FiSend />
       </button>
+
     </div>
   );
 }
