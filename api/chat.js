@@ -9,7 +9,6 @@ export default async function handler(req, res) {
   }
 
   try {
-
     const { message } = req.body;
 
     if (!message) {
@@ -34,10 +33,10 @@ export default async function handler(req, res) {
 
     const result = await model.generateContent(message);
 
-    const text = result.response.text();
+    const reply = result.response.text();
 
     return res.status(200).json({
-      reply: text,
+      reply: reply,
     });
 
   } catch (error) {
