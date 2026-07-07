@@ -2,16 +2,19 @@ import React, { useState } from "react";
 import "./ChatInput.css";
 import { FiImage, FiMic, FiSend } from "react-icons/fi";
 
-function ChatInput() {
+function Chatinput() {
+
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const sendMessage = async () => {
+
     if (!message.trim()) return;
 
     setLoading(true);
 
     try {
+
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
@@ -22,49 +25,61 @@ function ChatInput() {
         }),
       });
 
+
       const data = await response.json();
 
+
       if (!response.ok) {
-        throw new Error(data.reply || "AI request failed");
+        throw new Error(data.reply || "AI Error");
       }
+
 
       alert(data.reply);
 
       setMessage("");
 
+
     } catch (error) {
-      console.error("Chat Error:", error);
+
+      console.error(error);
 
       alert(error.message);
 
     } finally {
+
       setLoading(false);
+
     }
+
   };
 
 
   return (
+
     <div className="chat-input">
 
       <button className="icon-btn">
         <FiImage />
       </button>
 
+
       <button className="icon-btn">
         <FiMic />
       </button>
+
 
       <input
         type="text"
         placeholder="Message AI..."
         value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
+        onChange={(e)=>setMessage(e.target.value)}
+        onKeyDown={(e)=>{
+          if(e.key==="Enter"){
             sendMessage();
           }
         }}
       />
+
 
       <button
         className="send-btn"
@@ -74,8 +89,11 @@ function ChatInput() {
         <FiSend />
       </button>
 
+
     </div>
+
   );
 }
 
-export default ChatInput;
+
+export default Chatinput;
