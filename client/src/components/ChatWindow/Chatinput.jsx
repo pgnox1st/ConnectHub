@@ -4,13 +4,19 @@ import { FiImage, FiMic, FiSend } from "react-icons/fi";
 
 const API_URL = "https://connecthub-backend-ydqo.onrender.com";
 
-function ChatInput() {
+function ChatInput({ addMessage }) {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const sendMessage = async () => {
-    if (!message.trim()) return;
+    if (!message.trim() || loading) return;
 
+    // पहले user का message दिखाओ
+    addMessage("user", message);
+
+    const userMessage = message;
+
+    setMessage("");
     setLoading(true);
 
     try {
@@ -19,22 +25,25 @@ function ChatInput() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({
+          message: userMessage,
+        }),
       });
 
-      // ❗ safe parse
-      const data = await res.json().catch(() => null);
+      const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error("Server Error");
-      }
-
-      alert(data?.reply || "No AI response");
-
-      setMessage("");
+      // AI reply chat में जोड़ो
+      addMessage(
+        "ai",
+        data.reply || "Sorry, I couldn't generate a response."
+      );
     } catch (error) {
-      console.error("Error:", error);
-      alert("AI is currently unavailable (backend issue)");
+      console.error(error);
+
+      addMessage(
+        "ai",
+        "⚠️ AI is currently unavailable. Please try again later."
+      );
     }
 
     setLoading(false);
@@ -47,13 +56,27 @@ function ChatInput() {
         placeholder="Ask anything..."
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            sendMessage();
+          }
+        }}
       />
 
-      <button><FiImage /></button>
-      <button><FiMic /></button>
+      <button type="button">
+        <FiImage />
+      </button>
 
-      <button onClick={sendMessage} disabled={loading}>
+      <button type="button">
+        <FiMic />
+      </button>
+
+      <button
+        type="button"
+        onClick={sendMessage}
+        disabled={loading}
+        className="send-btn"
+      >
         {loading ? "..." : <FiSend />}
       </button>
     </div>
