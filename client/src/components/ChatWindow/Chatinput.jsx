@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import "./Chatinput.css";
 import { FiImage, FiMic, FiSend } from "react-icons/fi";
 
-const API_URL = "https://connecthub-backend-ydqo.onrender.com";
-
 function ChatInput({ addMessage }) {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -11,16 +9,14 @@ function ChatInput({ addMessage }) {
   const sendMessage = async () => {
     if (!message.trim() || loading) return;
 
-    // पहले user का message दिखाओ
     addMessage("user", message);
 
     const userMessage = message;
-
     setMessage("");
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_URL}/api/chat`, {
+      const res = await fetch("/api/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -32,7 +28,6 @@ function ChatInput({ addMessage }) {
 
       const data = await res.json();
 
-      // AI reply chat में जोड़ो
       addMessage(
         "ai",
         data.reply || "Sorry, I couldn't generate a response."
