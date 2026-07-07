@@ -12,7 +12,7 @@ export default async function handler(req, res) {
 
     const { message } = req.body;
 
-    if (!message || !message.trim()) {
+    if (!message) {
       return res.status(400).json({
         reply: "Message is required",
       });
@@ -22,7 +22,7 @@ export default async function handler(req, res) {
 
     if (!apiKey) {
       return res.status(500).json({
-        reply: "GEMINI_API_KEY is missing in Vercel Environment Variables",
+        reply: "GEMINI_API_KEY is not configured",
       });
     }
 
@@ -36,19 +36,20 @@ export default async function handler(req, res) {
 
     const response = await result.response;
 
-    const reply = response.text();
+    const text = response.text();
 
     return res.status(200).json({
-      reply,
+      reply: text,
     });
+
 
   } catch (error) {
 
-    console.error("Gemini API Error:", error);
+    console.error("Gemini Error:", error);
 
     return res.status(500).json({
-      reply: error.message || "Gemini API Error",
+      reply: error.message || "AI Error",
     });
 
   }
-}
+      }
