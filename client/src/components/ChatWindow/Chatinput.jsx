@@ -46,7 +46,7 @@ function ChatInput({ setMessages }) {
         ...prev,
         {
           sender: "ai",
-          text: "Sorry, AI is currently unavailable.",
+          text: "AI is currently unavailable.",
         },
       ]);
     } finally {
