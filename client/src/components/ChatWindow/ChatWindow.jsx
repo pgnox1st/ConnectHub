@@ -1,41 +1,37 @@
 import React, { useState } from "react";
-import "./Chatwindow.css";
-
-import Message from "./Message";
-import ChatInput from "./Chatinput";
+import ChatInput from "../ChatInput/ChatInput";
 
 function ChatWindow() {
   const [messages, setMessages] = useState([
     {
-      type: "ai",
+      sender: "ai",
       text: "Hello 👋 Welcome to ConnectHub AI. How can I help you today?",
     },
   ]);
 
-  // User और AI message जोड़ने का function
-  const addMessage = (type, text) => {
-    setMessages((prev) => [
-      ...prev,
-      {
-        type,
-        text,
-      },
-    ]);
-  };
-
   return (
     <div className="chat-window">
+
       <div className="messages">
         {messages.map((msg, index) => (
-          <Message
+          <div
             key={index}
-            type={msg.type}
-            text={msg.text}
-          />
+            className={
+              msg.sender === "user"
+                ? "user-message"
+                : "ai-message"
+            }
+          >
+            {msg.text}
+          </div>
         ))}
       </div>
 
-      <ChatInput addMessage={addMessage} />
+      <ChatInput
+        messages={messages}
+        setMessages={setMessages}
+      />
+
     </div>
   );
 }
