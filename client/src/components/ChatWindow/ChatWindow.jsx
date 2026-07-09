@@ -1,3 +1,4 @@
+import "./ChatWindow.css";
 import React, { useState } from "react";
 import ChatInput from "../ChatInput/ChatInput";
 
