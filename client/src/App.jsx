@@ -3,7 +3,7 @@ import "./App.css";
 
 import Header from "./components/Header/Header";
 import Sidebar from "./components/Sidebar/Sidebar";
-import FeatureCards from "./components/FeatureCards.jsx";
+import FeatureCards from "./components/FeatureCards";
 import ChatWindow from "./components/ChatWindow/ChatWindow";
 
 function App() {
@@ -15,16 +15,6 @@ function App() {
         <Header />
 
         <div className="home">
-          <div className="welcome">
-            <h1>
-              Hello, <span>User 👋</span>
-            </h1>
-
-            <p>How can I help you today?</p>
-          </div>
-
-          <FeatureCards />
-
           <ChatWindow />
         </div>
       </div>
