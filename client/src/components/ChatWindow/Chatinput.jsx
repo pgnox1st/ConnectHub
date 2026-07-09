@@ -1,21 +1,23 @@
 import React, { useState } from "react";
 import { FiSend } from "react-icons/fi";
 
-function ChatInput({ messages, setMessages }) {
+function ChatInput({ setMessages }) {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const sendMessage = async () => {
     if (!message.trim() || loading) return;
 
-    const userMessage = {
-      sender: "user",
-      text: message,
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-
     const currentMessage = message;
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        sender: "user",
+        text: currentMessage,
+      },
+    ]);
+
     setMessage("");
     setLoading(true);
 
@@ -47,9 +49,9 @@ function ChatInput({ messages, setMessages }) {
           text: "Sorry, AI is currently unavailable.",
         },
       ]);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -59,10 +61,14 @@ function ChatInput({ messages, setMessages }) {
         placeholder="Message ConnectHub AI..."
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            sendMessage();
+          }
+        }}
       />
 
-      <button onClick={sendMessage}>
+      <button onClick={sendMessage} disabled={loading}>
         <FiSend />
       </button>
     </div>
