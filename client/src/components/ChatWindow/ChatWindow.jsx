@@ -12,7 +12,6 @@ function ChatWindow() {
 
   return (
     <div className="chat-window">
-
       <div className="messages">
         {messages.map((msg, index) => (
           <div
@@ -28,11 +27,7 @@ function ChatWindow() {
         ))}
       </div>
 
-      <ChatInput
-        messages={messages}
-        setMessages={setMessages}
-      />
-
+      <ChatInput setMessages={setMessages} />
     </div>
   );
 }
