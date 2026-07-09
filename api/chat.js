@@ -1,7 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export default async function handler(req, res) {
-
   if (req.method !== "POST") {
     return res.status(405).json({
       reply: "Method Not Allowed",
@@ -9,7 +8,6 @@ export default async function handler(req, res) {
   }
 
   try {
-
     const { message } = req.body;
 
     if (!message) {
@@ -22,7 +20,7 @@ export default async function handler(req, res) {
 
     if (!apiKey) {
       return res.status(500).json({
-        reply: "GEMINI_API_KEY is not configured",
+        reply: "GEMINI_API_KEY missing",
       });
     }
 
@@ -33,23 +31,16 @@ export default async function handler(req, res) {
     });
 
     const result = await model.generateContent(message);
-
-    const response = await result.response;
-
-    const text = response.text();
+    const text = result.response.text();
 
     return res.status(200).json({
       reply: text,
     });
-
-
   } catch (error) {
-
-    console.error("Gemini Error:", error);
+    console.error(error);
 
     return res.status(500).json({
       reply: error.message || "AI Error",
     });
-
   }
-      }
+}
