@@ -1,3 +1,6 @@
+git add .
+git commit -m "Final Chat UI"
+git push
 import React from "react";
 import "./App.css";
 
